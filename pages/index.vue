@@ -20,22 +20,37 @@ export default {
       rows: 15,
       cells: [],
       top: 0,
-      top0: 0, // 1マス分ドロップした際に、前回描画したブロックをクリアする為に使用する
+      top0: 0,                  // 1マス分ドロップした際に、前回描画したブロックをクリアする為に使用する
       left: 0,
       left0: 0,
       keys: {},
-      dropSpeed: 1000
+      dropInterval: 1000,
+      dropSpeed: 50,            // 1秒間に操作できる最大回数
+      tick: 0,
+      angles: [],               // 棒の回転後の位置を保持する
+      angle: 0,                 // 現在の回転
+      parts: [],
+      parts0: []
     }
   },
   mounted () {
     this.cells = document.getElementsByTagName('td')
     document.onkeydown = this.keydown
-    this.top = 0
+    this.top = 1
     this.top0 = this.top
-
+    this.left = Math.floor(this.cols / 2)
+    this.left0 = this.left
+    this.dropInterval = 1000 / this.dropSpeed
+    this.angles = this.getAngles()
     this.move()
   },
   methods: {
+    getAngles: function() {
+      var w = this.cols
+      // 各々ブロック要素の相対位置を保持
+      // それぞれ、90度回転、180度回転、270度回転の順。
+      return [[-1, 1, 2], [-w, w, w * 2], [-2, -1, 1], [-w * 2, -w, w]]
+    },
     keydown: function(e) {
       switch (e.keyCode) {
         case 37:
@@ -46,12 +61,20 @@ export default {
           this.keys.right = true
           break;
 
+        case 32:
+          this.keys.rotate = true
+          break;
+
         default:
 
       }
     },
     move: function (){
+
+      this.tick++
+
       this.left0 = this.left
+
       if (this.keys.left && this.left > 0) {
         this.left--
       }
@@ -60,25 +83,36 @@ export default {
         this.left++
       }
 
+      if (this.keys.rotate) {
+        this.angle++
+      }
+
       this.keys = {}
+      this.parts = this.angles[this.angle % this.angles.length]
+      for (let i = -1; i < this.parts0.length; i++) {
+        // 回転後の位置を取り出す
+        let offset0 = this.parts0[i] || 0
 
-      let index0 = this.top0 * this.cols + 0 + this.left0
-      this.cells[index0].style.backgroundColor = ''
-      this.cells[index0 + 1].style.backgroundColor = ''
-      this.cells[index0 + 2].style.backgroundColor = ''
-      this.cells[index0 + 3].style.backgroundColor = ''
+        let index0 = this.top0 * this.cols + this.left0 + offset0
+        this.cells[index0].style.backgroundColor = ''
 
-      let index = this.top * this.cols + 0 + this.left
-      this.cells[index].style.backgroundColor = 'red'
-      this.cells[index + 1].style.backgroundColor = 'red'
-      this.cells[index + 2].style.backgroundColor = 'red'
-      this.cells[index + 3].style.backgroundColor = 'red'
+        let offset = this.parts[i] || 0
+        let index = this.top * this.cols + 0 + this.left + offset
+        this.cells[index].style.backgroundColor = 'red'
+      }
 
       this.top0 = this.top
-      this.top++
+      this.parts0 = this.parts
+
+      if (this.tick % this.dropSpeed == 0) {
+        this.top++
+      }
+
+      const info = this.tick + ' (' + this.left + ', ' + this.top + ')'
+      console.log(info);
 
       if (this.top < this.rows) {
-        window.setTimeout(this.move, this.dropSpeed)
+        window.setTimeout(this.move, this.dropInterval)
       }
     }
   }
