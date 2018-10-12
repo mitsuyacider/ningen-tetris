@@ -38,7 +38,7 @@ module.exports = {
   modules: [
   ['nuxt-sass-resources-loader', [
     'assets/scss/variables_for_vue.scss',
-  ]],
+  ]]],
   css: [
   'bootstrap/dist/css/bootstrap.min.css',
   'bootstrap-vue/dist/bootstrap-vue.css',
