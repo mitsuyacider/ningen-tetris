@@ -11,7 +11,10 @@ module.exports = {
     ],
     link: [
       { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' }
-    ]
+    ],
+    script: [
+      { src: 'https://unpkg.com/vue-p5@0.7.x' }
+    ],
   },
   /*
   ** Customize the progress bar color
@@ -35,10 +38,10 @@ module.exports = {
       }
     }
   },
-  modules: [
-  ['nuxt-sass-resources-loader', [
-    'assets/scss/variables_for_vue.scss',
-  ]]],
+  // modules: [
+  // ['nuxt-sass-resources-loader', [
+  //   'assets/scss/variables_for_vue.scss',
+  // ]]],
   css: [
   'bootstrap/dist/css/bootstrap.min.css',
   'bootstrap-vue/dist/bootstrap-vue.css',

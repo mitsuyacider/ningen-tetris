@@ -15,7 +15,9 @@
   "dependencies": {
     "bootstrap-vue": "^2.0.0-rc.11",
     "nuxt": "^2.0.0",
-    "nuxt-sass-resources-loader": "^2.0.5"
+    "nuxt-sass-resources-loader": "^2.0.5",
+    "vue": "^2.5.17",
+    "vue-p5": "^0.7.1"
   },
   "devDependencies": {
     "babel-eslint": "^8.2.1",

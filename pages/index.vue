@@ -1,5 +1,8 @@
 <template>
   <div class="container border">
+    <div class="container border ">
+      <div class="d-flex justify-content-center" ref="canvas"></div>
+    </div>
     <table class="table-bordered block-table text-center">
       <tbody>
         <tr v-for="rowIndex in rows">
@@ -14,6 +17,7 @@
 
 <script>
 export default {
+
   data () {
     return {
       cols: 10 + 2,             // 左右に壁をつける為に +2 する
@@ -33,7 +37,8 @@ export default {
       fills: [],                // ブロックのあるマス目を記録する
       blocks: [],               // 表示させるブロックの数
       block: {},
-      score: 0
+      score: 0,
+      img: ""
     }
   },
   mounted () {
@@ -49,9 +54,43 @@ export default {
     this.top0 = this.top
     this.left = Math.floor(this.cols / 2) // 青マスがちょうど中央に来るようにする
     this.dropInterval = 1000 / this.dropSpeed
-    this.move()
+
+
+    this.script = p => {
+      this.x = 100
+      this.y = 100
+
+      // this.img = p.loadImage("../static/img/download.png");
+      p.preload = _ => {
+        this.img = p.loadImage('img/download.png');
+      }
+
+      p.setup = _ => {
+        this.setup(p)
+      }
+
+      p.draw = _ => {
+        this.draw(p)
+      }
+    }
+    const P5 = require('p5')
+    this.ps = new P5(this.script)
+    // this.move()
   },
   methods: {
+    setup: function(p) {
+      self.canvas = p.createCanvas(400, 400)
+      self.canvas.parent(this.$refs.canvas)
+      p.frameRate(60)
+    },
+    draw: function(p) {
+      p.background(0)
+      p.image(this.img, this.x, 0);
+      p.fill(255)
+      p.rect(p.mouseX, p.mouseY, 50, 50)
+
+      // this.x++;
+    },
     getBlocks: function () {
       const w = this.cols
       return [
@@ -161,7 +200,7 @@ export default {
               const wallIndex0 = this.top0 * this.cols + this.left0 + wallOffset0
               this.fills[wallIndex0] = this.block.color
             }
-            
+
             // NOTE: ブロックを消す
             let cleans = 0
             // NOTE: 下から走査して調べていく
@@ -244,6 +283,10 @@ export default {
 </script>
 
 <style lang="scss">
+.vue-canvas {
+  margin: 0 auto;
+  margin-left: 100px;
+}
 .block-table  {
   /* 中央に寄せる */
   margin: 0 auto;
