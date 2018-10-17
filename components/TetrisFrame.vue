@@ -19,7 +19,7 @@ export default {
       // ステージ
       const BLOCK_SIZE = 24;        // 1ブロックのサイズ
       const BLOCK_ROWS = 22;    // ステージの高さ（20ライン分をステージとして使用し、上下1ラインはあたり判定とブロックコピー用に使用）
-      const BLOCK_COLS = 12;    // ステージの幅
+      const BLOCK_COLS = 18;    // ステージの幅
       const SCREEN_WIDTH = BLOCK_SIZE * BLOCK_COLS; // キャンバスの幅
       const SCREEN_HEIGHT = BLOCK_SIZE * BLOCK_ROWS;    // キャンバスの高さ
       // ゲームの状態
@@ -32,8 +32,6 @@ export default {
       const LOCK_BLOCK = 2;     // ロックした（動かせない）ブロック
       const CLEAR_BLOCK = 3;    // 消去するブロック（1ライン揃ったとき）
       const WALL = 9;           // 壁
-      // エフェクト
-      const EFFECT_ANIMATION = 2;   // エフェクト時のちかちかする回数
       // 色
       const BACK_COLOR = "#ddd";            // 背景色
       const GAMEOVER_COLOR = "#fff";            // ゲームオーバー時のブロックの色
@@ -41,8 +39,6 @@ export default {
       const LOCK_COLOR = "#333";            // ロックしたブロックの色
       const WALL_COLOR = "#666";            // 壁の色
       const ERROR_COLOR = "#f00";           // エラーブロックの色
-      const EFFECT_COLOR1 = "#fff";         // エフェクト時の色1
-      const EFFECT_COLOR2 = "#000";         // エフェクト時の色2
       // ゲーム要素
       const NEXTLEVEL = 10;                 // 次のレベルまでの消去ライン数
 
@@ -57,14 +53,10 @@ export default {
       let block = new Array();                // 落ちてくるブロックの種類（７種類）
       let oBlock = new Array();               // 操作中のブロック
       let blockType;                      // ブロックの種類番号
-      let x, y;                               // ブロックの現在位置
-      let sx, sy;                         // ブロックの元位置
       let mode;                           // ゲームの状態  GAME/GAMEOVER/EFFECT
       let clearLine;                          // 消去したライン数
       let mino;
 
-      // エフェクト時（色の反転/エフェクトスピード/エフェクト回数）
-      let effectState = {flipFlop: 0, speed: 0, count: 0};
       p5.preload = _ => {
         img = p5.loadImage('img/download.png');
       }
@@ -79,10 +71,6 @@ export default {
         this.canvas.parent(this.$refs.canvas)
 
         clearLine = 0;
-        // エフェクト設定
-        effectState.flipFlop = 0;
-        effectState.speed = 4;
-        effectState.count = 0;
         // ブロックの設定
         bs = BLOCK_SIZE;
         // ブロックを設定
@@ -140,7 +128,7 @@ export default {
       }
 
       /*
-       * ゲーム開始処理
+       * NOTE: ゲーム開始処理
        */
       let newGame = function () {
         setStage();
@@ -152,7 +140,7 @@ export default {
       }
 
       /*
-       * ステージ設定
+       * NOTE: ステージ設定
        */
       let setStage = function (){
           // 操作ブロックための配列
@@ -176,21 +164,21 @@ export default {
       }
 
       /*
-       * 新しいブロックを作成
+       * NOTE: 新しいブロックを作成
        */
       let createBlock = function (){
           if(mode == EFFECT) return;
           mino = new TetrisMino()
-          x = sx = Math.floor(BLOCK_COLS / 3);
-          y = sy = 0;
-          blockType = Math.floor(Math.random() * block.length);
+          const x = Math.floor(BLOCK_COLS / 3);
+          const y = 0;
+          const blockType = Math.floor(Math.random() * block.length);
 
           // NOTE: ※2次元配列をディープコピーする
           oBlock = JSON.parse(JSON.stringify(block[blockType]))
 
           mino = new TetrisMino(x, y, blockType, oBlock)
 
-          if(hitCheck()){
+          if(mino.hitCheck(field)){
               mode = GAMEOVER;
               console.log("GAMEOVER!");
           }
@@ -198,20 +186,17 @@ export default {
       }
 
       /*
-       * ゲームメイン
+       * NOTE: ゲームメイン
        */
       let mainLoop = function (){
           if(mode == GAME){
-              // sx = x; sy = y;     // 元の位置を保存
+              // 元の位置を保存
               mino.keepInterimPosition()
+
               if(frame % speed == 0){ // ブロックが落下する間隔
-                  // clearBlock();
                   mino.setBlockType(field, NON_BLOCK)
 
-                  // y++;
                   mino.drop(field, () => {
-                    console.log("hit");
-                    // lockBlock();
                     mino.setBlockType(field, LOCK_BLOCK)
 
                     if(lineCheck() > 0) {
@@ -222,21 +207,6 @@ export default {
                     }
                     createBlock()
                   })
-                  // if(mino.hitCheck(field)){
-                  //   console.log("*** hit!!!");
-                  //
-                  //     y = sy;
-                  //     lockBlock();
-                  //
-                      // if(lineCheck() > 0) {
-                      //     // FIXME: 消えるアニメーションを追加する
-                      //     // mode = EFFECT;
-                      //     mode = GAME;
-                      //     deleteLine();
-                      // }
-                  //
-                  //     createBlock();
-                  // }
                   putBlock();
               }
               drawTetris();
@@ -245,9 +215,6 @@ export default {
               gameOver();
           }
           else if(mode == EFFECT){
-              if(frame % effectState.speed == 0){
-                  effect();
-              }
           }
           frame++;
           // 落下スピードアップ
@@ -260,37 +227,15 @@ export default {
       }
 
       /*
-       * ブロックの当たり判定処理（移動できるか？落下できるか？）
-       */
-      let hitCheck = function (){
-          if(mode == EFFECT) return;
-          for(var i = 0; i < 4; i++){
-              for(var j = 0; j < 4; j++){
-                  if(field[i + y][j + x] && oBlock[i][j]) {
-                    return 1;
-                  }
-              }
-          }
-          return 0;
-      }
-
-      /*
-       * ブロックをステージにセットする
+       * NOTE: ブロックをステージにセットする
        */
       let putBlock = function (){
           if(mode == EFFECT) return;
           mino.setBlockInField(field)
-          // for(var i = 0; i < 4; i++){
-          //     for(var j = 0; j < 4; j++){
-          //         if(mino.oBlock[i][j]) {
-          //           field[i + mino.y][j + mino.x] = mino.oBlock[i][j];
-          //         }
-          //     }
-          // }
       }
 
       /*
-       * 描画処理
+       * NOTE: 描画処理
        */
       let drawTetris = function (){
           clearWindow();
@@ -322,7 +267,7 @@ export default {
       }
 
       /*
-       * ゲーム画面クリア
+       * NOTE: ゲーム画面クリア
        */
       let clearWindow = function (){
       		p5.fill(221, 221, 221)
@@ -330,16 +275,7 @@ export default {
       }
 
       /*
-       * ブロックを消去する
-       */
-      let clearBlock = function (){
-          if(mode == EFFECT) return;
-
-          // setBlockType(NON_BLOCK)
-      }
-
-      /*
-       * ブロックタイプをセットする
+       * NOTE: ブロックタイプをセットする
        */
       let setBlockType = function (type) {
         for(var i = 0; i < 4; i++){
@@ -352,7 +288,7 @@ export default {
       }
 
       /*
-       * ブロックをロック（動かせないように）する
+       * NOTE: ブロックをロック（動かせないように）する
        */
       let lockBlock = function () {
           if(mode == EFFECT) return;
@@ -360,7 +296,7 @@ export default {
       }
 
       /*
-       * ラインが揃ったかチェックする
+       * NOTE: ラインが揃ったかチェックする
        */
       let lineCheck = function (){
           if(mode == EFFECT) return;
@@ -384,13 +320,11 @@ export default {
       }
 
       /*
-       * 操作
+       * NOTE: 操作
        */
       let keyDownFunc = function (e){
           if(mode == EFFECT) return;
           if(mode == GAME){
-              // clearBlock();
-              // mino.setBlockType(field, CLEAR_BLOCK)
               mino.setBlockType(field, NON_BLOCK)
               mino.keepInterimPosition()
               // sx = x; sy = y;
@@ -398,21 +332,17 @@ export default {
                   rotateBlock();
               }
               else if(e.keyCode == 37){
-                  x--;
                   mino.x--
               }
               else if(e.keyCode == 39){
-                  x++;
                   mino.x++
               }
               else if(e.keyCode == 40){
-                  y++;
                   mino.y++
               }
 
               if(mino.hitCheck(field)){
                 mino.returnPosition()
-                  // x = sx; y = sy;
               }
 
               putBlock();
@@ -425,35 +355,16 @@ export default {
       }
 
       /*
-       * ブロックの回転処理
+       * NOTE: ブロックの回転処理
        */
       let rotateBlock = function (){
           if(mode == EFFECT) return;
-          // clearBlock();
           mino.setBlockType(field, NON_BLOCK)
           mino.rotate(field)
       }
 
-
       /*
-       * ラインを消去するときのエフェクト
-       */
-      let effect = function () {
-      //     var colors = [ EFFECT_COLOR1, EFFECT_COLOR2 ];
-      //     effectState.flipFlop = 1 - effectState.flipFlop;    // エフェクト色を交互に切り替え
-      //
-      //     if(effectState.count > EFFECT_ANIMATION){
-      //         mode = GAME;
-      //         effectState.count = 0;
-      //         effectState.flipFlop = 0;
-      //         deleteLine();
-      //         createBlock();
-      //     }
-      //     effectState.count++;
-      }
-
-      /*
-       * そろったラインを消去する
+       * NOTE: そろったラインを消去する
        */
       let deleteLine = function (){
           if(mode == EFFECT) return;
@@ -472,14 +383,13 @@ export default {
 
 
       /*
-       * ゲームオーバー処理
+       * NOTE: ゲームオーバー処理
        */
       let gameOver = function (){
           for(var i=0; i<BLOCK_ROWS; i++){
               for(var j=0; j<BLOCK_COLS; j++){
                   if(field[i][j] && field[i][j] != WALL){ // ブロックのみ色を変える
       								p5.fill(255)
-                      // g.fillStyle = GAMEOVER_COLOR;
                       p5.rect(j*bs, i*bs, bs-1, bs-1);
                   }
               }

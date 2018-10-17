@@ -73,6 +73,10 @@ export default class TetrisMino {
      return false;
    }
 
+   /*
+    * NOTE: ブロック状態をセットする
+    @param: NON_BLOCK, NORMAL_BLOCK, LOCK_BLOCK, CLEAR_BLOCK, WALL
+    */
    setBlockType(field, type) {
      for(var i = 0; i < 4; i++){
          for(var j = 0; j < 4; j++){
@@ -81,10 +85,6 @@ export default class TetrisMino {
              }
          }
      }
-   }
-
-   clearBlock(field, type) {
-     this.setBlockType(field, type)
    }
 
    returnPosition() {
