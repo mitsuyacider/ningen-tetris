@@ -62,6 +62,7 @@ export default {
       let mode;                           // ゲームの状態  GAME/GAMEOVER/EFFECT
       let clearLine;                          // 消去したライン数
       let mino;
+
       // エフェクト時（色の反転/エフェクトスピード/エフェクト回数）
       let effectState = {flipFlop: 0, speed: 0, count: 0};
       p5.preload = _ => {
@@ -179,12 +180,15 @@ export default {
        */
       let createBlock = function (){
           if(mode == EFFECT) return;
+          mino = new TetrisMino()
           x = sx = Math.floor(BLOCK_COLS / 3);
           y = sy = 0;
           blockType = Math.floor(Math.random() * block.length);
 
           // NOTE: ※2次元配列をディープコピーする
           oBlock = JSON.parse(JSON.stringify(block[blockType]))
+
+          mino = new TetrisMino(x, y, blockType, oBlock)
 
           if(hitCheck()){
               mode = GAMEOVER;
@@ -198,23 +202,41 @@ export default {
        */
       let mainLoop = function (){
           if(mode == GAME){
-              sx = x; sy = y;     // 元の位置を保存
+              // sx = x; sy = y;     // 元の位置を保存
+              mino.keepInterimPosition()
               if(frame % speed == 0){ // ブロックが落下する間隔
-                  clearBlock();
-                  y++;
-                  if(hitCheck()){
-                      y = sy;
-                      lockBlock();
+                  // clearBlock();
+                  mino.setBlockType(field, NON_BLOCK)
 
-                      if(lineCheck() > 0) {
-                          // FIXME: 消えるアニメーションを追加する
-                          // mode = EFFECT;
-                          mode = GAME;
-                          deleteLine();
-                      }
+                  // y++;
+                  mino.drop(field, () => {
+                    console.log("hit");
+                    // lockBlock();
+                    mino.setBlockType(field, LOCK_BLOCK)
 
-                      createBlock();
-                  }
+                    if(lineCheck() > 0) {
+                        // FIXME: 消えるアニメーションを追加する
+                        // mode = EFFECT;
+                        mode = GAME;
+                        deleteLine();
+                    }
+                    createBlock()
+                  })
+                  // if(mino.hitCheck(field)){
+                  //   console.log("*** hit!!!");
+                  //
+                  //     y = sy;
+                  //     lockBlock();
+                  //
+                      // if(lineCheck() > 0) {
+                      //     // FIXME: 消えるアニメーションを追加する
+                      //     // mode = EFFECT;
+                      //     mode = GAME;
+                      //     deleteLine();
+                      // }
+                  //
+                  //     createBlock();
+                  // }
                   putBlock();
               }
               drawTetris();
@@ -257,13 +279,14 @@ export default {
        */
       let putBlock = function (){
           if(mode == EFFECT) return;
-          for(var i = 0; i < 4; i++){
-              for(var j = 0; j < 4; j++){
-                  if(oBlock[i][j]) {
-                    field[i + y][j + x] = oBlock[i][j];
-                  }
-              }
-          }
+          mino.setBlockInField(field)
+          // for(var i = 0; i < 4; i++){
+          //     for(var j = 0; j < 4; j++){
+          //         if(mino.oBlock[i][j]) {
+          //           field[i + mino.y][j + mino.x] = mino.oBlock[i][j];
+          //         }
+          //     }
+          // }
       }
 
       /*
@@ -312,7 +335,7 @@ export default {
       let clearBlock = function (){
           if(mode == EFFECT) return;
 
-          setBlockType(NON_BLOCK)
+          // setBlockType(NON_BLOCK)
       }
 
       /*
@@ -366,23 +389,32 @@ export default {
       let keyDownFunc = function (e){
           if(mode == EFFECT) return;
           if(mode == GAME){
-              clearBlock();
-              sx = x; sy = y;
+              // clearBlock();
+              // mino.setBlockType(field, CLEAR_BLOCK)
+              mino.setBlockType(field, NON_BLOCK)
+              mino.keepInterimPosition()
+              // sx = x; sy = y;
               if(e.keyCode == 32){
                   rotateBlock();
               }
               else if(e.keyCode == 37){
                   x--;
+                  mino.x--
               }
               else if(e.keyCode == 39){
                   x++;
+                  mino.x++
               }
               else if(e.keyCode == 40){
                   y++;
+                  mino.y++
               }
-              if(hitCheck()){
-                  x = sx; y = sy;
+
+              if(mino.hitCheck(field)){
+                mino.returnPosition()
+                  // x = sx; y = sy;
               }
+
               putBlock();
           }
           else if(mode == GAMEOVER){
@@ -397,33 +429,9 @@ export default {
        */
       let rotateBlock = function (){
           if(mode == EFFECT) return;
-          clearBlock();
-          // 回転ブロック退避の配列
-          // NOTE: ※2次元配列をディープコピーする
-          const tBlock = JSON.parse(JSON.stringify(oBlock))
-
-          // ブロックを回転
-          // http://blog.livedoor.jp/unahide/archives/53141026.html
-          // let x, y
-          // for(var i = 0; i < 4; i++){
-          // 		y = oBlock[i][1];
-          // 		x = oBlock[i][0];
-          // 		oBlock[i][0] = -y;
-          // 		oBlock[i][1] = x;
-          // 	}
-
-          for(var i = 0; i < 4; i++){
-              for(var j = 0; j < 4; j++){
-                  oBlock[i][j] = tBlock[3-j][i];
-              }
-          }
-
-          if(hitCheck()){
-              // 元に戻す
-              oBlock = JSON.parse(JSON.stringify(tBlock))
-          }
-          putBlock();
-          return 0;
+          // clearBlock();
+          mino.setBlockType(field, NON_BLOCK)
+          mino.rotate(field)
       }
 
 
