@@ -75,7 +75,8 @@ export default class TetrisMino {
 
    /*
     * NOTE: ブロック状態をセットする
-    @param: NON_BLOCK, NORMAL_BLOCK, LOCK_BLOCK, CLEAR_BLOCK, WALL
+    @param field:  NON_BLOCK, NORMAL_BLOCK, LOCK_BLOCK, CLEAR_BLOCK, WALL
+    @param type :  ブロックの状態
     */
    setBlockType(field, type) {
      for(var i = 0; i < 4; i++){
@@ -87,15 +88,19 @@ export default class TetrisMino {
      }
    }
 
+   /*
+    * NOTE: ブロックのポジションを戻す
+    */
    returnPosition() {
      this.x = this.sx
      this.y = this.sy
    }
 
+   /*
+    * NOTE: ブロックのポジションを保存する
+    */
    keepInterimPosition() {
      this.sx = this.x
      this.sy = this.y
    }
-
-
 }

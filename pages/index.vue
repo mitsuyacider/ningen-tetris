@@ -1,15 +1,10 @@
 <template>
   <div class="container border">
+    <div class="human-container" style="position:absolute;">
+      <video id="video" width="400px" height="300px" autoplay="1" style="position:absolute;"></video>
+      <canvas id="canvas" width="400px" height="300px" style="position:absolute;"></canvas>
+    </div>
     <tetris-frame />
-    <!-- <table class="table-bordered block-table text-center">
-      <tbody>
-        <tr v-for="rowIndex in rows">
-          <td v-for="colIndex in cols">
-            ({{ rowIndex - 1 }}, {{ colIndex - 1 }})
-          </td>
-        </tr>
-      </tbody>
-    </table> -->
   </div>
 </template>
 
@@ -43,19 +38,11 @@ export default {
     }
   },
   mounted () {
-    // this.cells = document.getElementsByTagName('td')
-    // // 壁をつくる
-    // this.makeWalls()
-    // // 落ちて来るブロックをつくる
-    // this.blocks = this.getBlocks()
-    //
-    // this.block = this.blocks[Math.floor(Math.random() * this.blocks.length)]
-    // document.onkeydown = this.keydown
-    // this.top = 1
-    // this.top0 = this.top
-    // this.left = Math.floor(this.cols / 2) // 青マスがちょうど中央に来るようにする
-    // this.dropInterval = 1000 / this.dropSpeed
-    // this.move()
+    // NOTE: サーバーサイドレンダリングはdocumentオブジェクトを参照できないため、
+    //       クライアントサイドでのみする処理を明記する。
+    if (process.browser) {
+      require('@/js/PosenetSample.js');
+    }
   },
   methods: {
     getBlocks: function () {
@@ -250,6 +237,18 @@ export default {
 </script>
 
 <style lang="scss">
+.human-container {
+  left: 0;
+  bottom: 0;
+  video {
+    opacity:.65;
+
+  }
+  canvas {
+    opacity:.65;
+
+  }
+}
 .vue-canvas {
   margin: 0 auto;
   margin-left: 100px;

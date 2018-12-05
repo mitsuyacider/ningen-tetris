@@ -13,9 +13,12 @@
     "precommit": "npm run lint"
   },
   "dependencies": {
+    "@tensorflow-models/posenet": "^0.2.3",
+    "@tensorflow/tfjs": "^0.14.0",
     "bootstrap-vue": "^2.0.0-rc.11",
     "nuxt": "^2.0.0",
     "nuxt-sass-resources-loader": "^2.0.5",
+    "stats.js": "^0.17.0",
     "vue": "^2.5.17",
     "vue-p5": "^0.7.1"
   },

@@ -36,7 +36,8 @@ module.exports = {
           exclude: /(node_modules)/
         })
       }
-    }
+    },
+    vendor: ['PosenetSample.js', 'demo_util.js']
   },
   // modules: [
   // ['nuxt-sass-resources-loader', [
