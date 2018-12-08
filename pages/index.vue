@@ -1,8 +1,8 @@
 <template>
   <div class="container border">
-    <div class="human-container" style="position:absolute;">
-      <video id="video" width="400px" height="300px" autoplay="1" style="position:absolute;"></video>
-      <canvas id="canvas" width="400px" height="300px" style="position:absolute;"></canvas>
+    <div class="human-container" style="d-flex justify-content-center">
+      <video id="video" width="640px" height="480px" autoplay="1" style="position:absolute;"></video>
+      <canvas id="canvas" width="640px" height="480px" style="position:absolute;"></canvas>
     </div>
     <tetris-frame />
   </div>
@@ -11,50 +11,51 @@
 <script>
 import TetrisFrame from '@/components/TetrisFrame'
 
+// NOTE: サーバーサイドレンダリングはdocumentオブジェクトを参照できないため、
+//       クライアントサイドでのみする処理を明記する。
+if (process.browser) {
+  var posenet = require('@/js/PosenetSample.js')
+}
+
 export default {
   components: {
     TetrisFrame
   },
   data () {
     return {
+      posenet: {}
     }
   },
   mounted () {
-    // NOTE: サーバーサイドレンダリングはdocumentオブジェクトを参照できないため、
-    //       クライアントサイドでのみする処理を明記する。
-    if (process.browser) {
-      require('@/js/PosenetSample.js');
-    }
+    posenet.setDelegate(this.callbackDelegate);
   },
   methods: {
+    callbackDelegate(keypoints, score) {
+    }
   }
 }
 </script>
 
 <style lang="scss">
 .human-container {
-  left: 0;
-  bottom: 0;
-  video {
-    opacity:.65;
 
+  video {
+    opacity: .65;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    margin: auto;
   }
   canvas {
     opacity:.65;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    margin: auto;
 
   }
-}
-.vue-canvas {
-  margin: 0 auto;
-  margin-left: 100px;
-}
-.block-table  {
-  /* 中央に寄せる */
-  margin: 0 auto;
-}
-
-.isBlock {
-  background: red;
 }
 
 table td {

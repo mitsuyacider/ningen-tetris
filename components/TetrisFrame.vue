@@ -47,7 +47,7 @@ export default {
        */
       let stage = new Array(BLOCK_COLS);  // ゲームのステージ枠（壁の情報のみ、変化しない）
       let field = new Array(BLOCK_COLS);      // ゲーム中のステージ枠とブロック表示用（変化する）
-      let bs;                             // ブロックサイズ
+      let blockSize;                             // ブロックサイズ
       let speed;                          // 落下速度
       let frame;                          // ゲームフレーム番号
       let block = new Array();                // 落ちてくるブロックの種類（７種類）
@@ -65,14 +65,13 @@ export default {
       }
 
       p5.setup = _ => {
-        mino = new TetrisMino()
         this.canvas = p5.createCanvas(width, height)
         p5.background(0)
         this.canvas.parent(this.$refs.canvas)
 
         clearLine = 0;
         // ブロックの設定
-        bs = BLOCK_SIZE;
+        blockSize = BLOCK_SIZE;
         // ブロックを設定
         block =  [[ [0, 0, 0, 0],
                     [0, 1, 1, 0],
@@ -134,7 +133,7 @@ export default {
         setStage();
         mode = GAME;
         frame = 1;
-        speed = 30;
+        speed = 80;
         createBlock();
         mainLoop();
       }
@@ -168,7 +167,6 @@ export default {
        */
       let createBlock = function (){
           if(mode == EFFECT) return;
-          mino = new TetrisMino()
           const x = Math.floor(BLOCK_COLS / 3);
           const y = 0;
           const blockType = Math.floor(Math.random() * block.length);
@@ -176,11 +174,10 @@ export default {
           // NOTE: ※2次元配列をディープコピーする
           oBlock = JSON.parse(JSON.stringify(block[blockType]))
 
-          mino = new TetrisMino(x, y, blockType, oBlock)
-
+          mino = new TetrisMino(x, y, blockType, oBlock, blockSize)
           if(mino.hitCheck(field)){
               mode = GAMEOVER;
-              console.log("GAMEOVER!");
+              console.log("***GAMEOVER!");
           }
           putBlock();
       }
@@ -209,7 +206,10 @@ export default {
                   })
                   putBlock();
               }
-              drawTetris();
+
+              clearWindow();
+              drawFixedBlocks();
+              mino.drawMinoBlock(p5);
           }
           else if(mode == GAMEOVER){
               gameOver();
@@ -229,7 +229,7 @@ export default {
       /*
        * NOTE: ブロックをステージにセットする
        */
-      let putBlock = function (){
+      let putBlock = function () {
           if(mode == EFFECT) return;
           mino.setBlockInField(field)
       }
@@ -237,31 +237,36 @@ export default {
       /*
        * NOTE: 描画処理
        */
-      let drawTetris = function (){
-          clearWindow();
-
+      let drawFixedBlocks = function (){
           for(var i = 0; i < BLOCK_ROWS; i++){
               for(var j = 0; j < BLOCK_COLS; j++){
                   switch(field[i][j]){
-                      case NON_BLOCK:     // なにもない
+                      // なにもない
+                      case NON_BLOCK:
       										p5.fill(221, 221, 221)
                           break;
-                      case NORMAL_BLOCK:      // ブロック
-      										p5.fill(0)
-                          break;
-                      case LOCK_BLOCK:        // ブロック（ロック）
+
+                      // ブロック（ロック）
+                      case LOCK_BLOCK:
       										p5.fill(255, 0, 0)
                           break;
-                      case CLEAR_BLOCK:       // 消去ブロック
+
+                      // 消去ブロック
+                      case CLEAR_BLOCK:
       										p5.fill(0)
                           break;
-                      case WALL:      // 壁
+
+                      // 壁
+                      case WALL:
       										p5.fill(0, 0, 255)
                           break;
-                      default:        // 重なったときの色
+
+                      // 重なったときの色
+                      default:
       										p5.fill(255, 255, 0)
                   }
-                  p5.rect(j * bs, i * bs, bs - 1, bs - 1);    // 1引いているのはブロック同士の隙間を入れるため
+
+                  p5.rect(j * blockSize, i * blockSize, blockSize - 1, blockSize - 1);
               }
           }
       }
@@ -390,7 +395,7 @@ export default {
               for(var j=0; j<BLOCK_COLS; j++){
                   if(field[i][j] && field[i][j] != WALL){ // ブロックのみ色を変える
       								p5.fill(255)
-                      p5.rect(j*bs, i*bs, bs-1, bs-1);
+                      p5.rect(j*blockSize, i*blockSize, blockSize-1, blockSize-1);
                   }
               }
           }

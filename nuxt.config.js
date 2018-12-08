@@ -36,8 +36,7 @@ module.exports = {
           exclude: /(node_modules)/
         })
       }
-    },
-    vendor: ['PosenetSample.js', 'demo_util.js']
+    }
   },
   // modules: [
   // ['nuxt-sass-resources-loader', [
@@ -48,6 +47,6 @@ module.exports = {
   'bootstrap-vue/dist/bootstrap-vue.css',
   ],
   plugins: [
-    '@/plugins/plugin',
+    '@/plugins/plugin'
   ]
 }

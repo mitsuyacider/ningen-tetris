@@ -1,10 +1,11 @@
 export default class TetrisMino {
 
-  constructor(_x, _y, _type,  _block) {
+  constructor(_x, _y, _type,  _block, _blockSize) {
     this.blockType = _type
     this.x = this.sx = _x
     this.y = this.sy = _y
     this.oBlock = _block
+    this.blockSize = _blockSize
   }
 
   /**
@@ -102,5 +103,26 @@ export default class TetrisMino {
    keepInterimPosition() {
      this.sx = this.x
      this.sy = this.y
+   }
+
+   drawMinoBlock(p5) {
+     // 身のブロックを描画
+     p5.fill(255,0,0);
+     const blockSize = this.blockSize;
+     for (var i = 0; i < 4; i++) {
+       for (var j = 0; j < 4; j++) {
+         if(this.oBlock[i][j]) {
+           p5.fill(0)
+           p5.rect((this.x + j) * blockSize, (this.y + i) * blockSize, blockSize - 1, blockSize - 1);
+         }
+       }
+     }
+
+     // 円を描画
+     p5.noFill();
+     p5.stroke(255,255,0);
+     const radius = blockSize * 5;
+     p5.ellipseMode(p5.CORNER);
+     p5.ellipse((this.x - 1) * blockSize, (this.y - 1) * blockSize, radius, radius);
    }
 }

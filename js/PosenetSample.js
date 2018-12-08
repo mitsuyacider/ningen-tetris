@@ -6,11 +6,19 @@ const imageScaleFactor = 0.2;
 const outputStride = 16;
 const flipHorizontal = false;
 const stats = new Stats();
-const contentWidth = 400;
-const contentHeight = 300;
+const contentWidth = 640;
+const contentHeight = 480;
 const minPartConfidence = 0.5
+let callbackDelegate;
 
 bindPage();
+
+export const sqrt = Math.sqrt;
+
+export function setDelegate(delegate) {
+  callbackDelegate = delegate
+}
+
 async function bindPage() {
     const net = await posenet.load(); // posenetの呼び出し
     let video;
@@ -27,6 +35,7 @@ async function bindPage() {
 async function loadVideo() {
     const video = await setupCamera(); // カメラのセットアップ
     video.play();
+
     return video;
 }
 
@@ -64,7 +73,6 @@ function detectPoseInRealTime(video, net) {
         let poses = [];
         const pose = await net.estimateSinglePose(video, imageScaleFactor, flipHorizontal, outputStride);
         poses.push(pose);
-
         ctx.clearRect(0, 0, contentWidth,contentHeight);
 
         ctx.save();
@@ -79,6 +87,8 @@ function detectPoseInRealTime(video, net) {
             // drawWristPoint(keypoints[10],ctx);
             drawKeypoints(keypoints, minPartConfidence, ctx);
             drawSkeleton(keypoints, minPartConfidence, ctx);
+
+            callbackDelegate(keypoints, score);
         });
 
         stats.end();
