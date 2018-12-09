@@ -2,13 +2,18 @@ import * as posenet from '@tensorflow-models/posenet';
 import {drawBoundingBox, drawKeypoints, drawSkeleton} from '@/js/demo_util.js';
 import Stats from 'stats.js';
 
-const imageScaleFactor = 0.2;
-const outputStride = 16;
+const imageScaleFactor = 0.5;
+const outputStride = 8;
 const flipHorizontal = false;
 const stats = new Stats();
 const contentWidth = 640;
 const contentHeight = 480;
-const minPartConfidence = 0.5
+// const minPartConfidence = 0.5;
+const minPartConfidence = 0.1;
+const minPoseConfidence = 0.10;
+const maxPoseDetections = 5;
+const nmsRadius = 30.0;
+
 let callbackDelegate;
 
 bindPage();
@@ -70,9 +75,19 @@ function detectPoseInRealTime(video, net) {
 
     async function poseDetectionFrame() {
         stats.begin();
-        let poses = [];
-        const pose = await net.estimateSinglePose(video, imageScaleFactor, flipHorizontal, outputStride);
-        poses.push(pose);
+        // NOTE: SinglePoseの場合
+        // let poses = [];
+        // const pose = await net.estimateSinglePose(video, imageScaleFactor, flipHorizontal, outputStride);
+        // poses.push(pose);
+
+        // NOTE: MultiPoseの場合
+        let poses = await net.estimateMultiplePoses(
+            video, imageScaleFactor, flipHorizontal, outputStride,
+            maxPoseDetections,
+            minPartConfidence,
+            nmsRadius)
+
+
         ctx.clearRect(0, 0, contentWidth,contentHeight);
 
         ctx.save();
@@ -82,13 +97,13 @@ function detectPoseInRealTime(video, net) {
         ctx.restore();
 
         poses.forEach(({ score, keypoints }) => {
-            // keypoints[9]には左手、keypoints[10]には右手の予測結果が格納されている
-            // drawWristPoint(keypoints[9],ctx);
-            // drawWristPoint(keypoints[10],ctx);
-            drawKeypoints(keypoints, minPartConfidence, ctx);
-            drawSkeleton(keypoints, minPartConfidence, ctx);
+            if (score >= minPoseConfidence) {
+              drawKeypoints(keypoints, minPartConfidence, ctx);
+              drawSkeleton(keypoints, minPartConfidence, ctx);
 
-            callbackDelegate(keypoints, score);
+              callbackDelegate(keypoints, score);
+            }
+
         });
 
         stats.end();

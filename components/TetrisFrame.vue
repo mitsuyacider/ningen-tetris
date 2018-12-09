@@ -21,10 +21,7 @@ export default {
   },
   methods: {
     setKeyPoints: function(keypoints) {
-      this.keypoints = keypoints;
-      const nose = this.keypoints[0];
-      const mapval = Math.floor(this.p5js.map(nose.position.x, 0, 640, 1, 14))
-      // tetris.mino.x = mapval;
+      tetris.updateMinoPosition(keypoints)
     }
   },
   mounted () {

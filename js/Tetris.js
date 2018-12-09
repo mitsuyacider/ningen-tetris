@@ -11,7 +11,8 @@ const length = 100
 // ステージ
 const BLOCK_SIZE = 24;        // 1ブロックのサイズ
 const BLOCK_ROWS = 22;    // ステージの高さ（20ライン分をステージとして使用し、上下1ラインはあたり判定とブロックコピー用に使用）
-const BLOCK_COLS = 18;    // ステージの幅
+// const BLOCK_COLS = 18;    // ステージの幅
+const BLOCK_COLS = 26;    // ステージの幅
 const SCREEN_WIDTH = BLOCK_SIZE * BLOCK_COLS; // キャンバスの幅
 const SCREEN_HEIGHT = BLOCK_SIZE * BLOCK_ROWS;    // キャンバスの高さ
 // ゲームの状態
@@ -162,6 +163,27 @@ export function mainGame(_p5) {
               newGame();
           }
       }
+  }
+}
+
+/*
+  NOTE: ミノブロックの位置をボーンデータに応じて更新させる
+  @param keypoins : ボーンポジションデータ
+*/
+export function updateMinoPosition(keypoints) {
+  if(mode == GAME){
+      mino.setBlockType(field, NON_BLOCK)
+      mino.keepInterimPosition()
+
+      const nose = keypoints[0];
+      const mapval = Math.floor(p5.map(nose.position.x, 0, width, 1, BLOCK_COLS - 1))
+      mino.x = mapval;
+
+      if(mino.hitCheck(field)){
+        mino.returnPosition()
+      }
+
+      putBlock();
   }
 }
 
