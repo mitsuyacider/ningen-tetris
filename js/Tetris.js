@@ -1,54 +1,56 @@
 
-import TetrisMino from '../js/TetrisMino.js';
-
+import TetrisMino from '@/js/TetrisMino.js';
 export let mino;
 
-export function mainGame(p5) {
-  let img
-  let width = 640
-  let height = 800
+let img
+let width = 640
+let height = 800
 
-  const num = 150
-  const length = 100
-  // ステージ
-  const BLOCK_SIZE = 24;        // 1ブロックのサイズ
-  const BLOCK_ROWS = 22;    // ステージの高さ（20ライン分をステージとして使用し、上下1ラインはあたり判定とブロックコピー用に使用）
-  const BLOCK_COLS = 18;    // ステージの幅
-  const SCREEN_WIDTH = BLOCK_SIZE * BLOCK_COLS; // キャンバスの幅
-  const SCREEN_HEIGHT = BLOCK_SIZE * BLOCK_ROWS;    // キャンバスの高さ
-  // ゲームの状態
-  const GAME = 1;           // ゲーム中
-  const GAMEOVER = 0;       // ゲームオーバー時
-  const EFFECT = 2;         // ブロックを消すときのエフェクトモード
-  // ブロックの状態
-  const NON_BLOCK = 0;      // ブロックが存在しない
-  const NORMAL_BLOCK = 1;   // 通常のブロック（動かせる）
-  const LOCK_BLOCK = 2;     // ロックした（動かせない）ブロック
-  const CLEAR_BLOCK = 3;    // 消去するブロック（1ライン揃ったとき）
-  const WALL = 9;           // 壁
-  // 色
-  const BACK_COLOR = "#ddd";            // 背景色
-  const GAMEOVER_COLOR = "#fff";            // ゲームオーバー時のブロックの色
-  const BLOCK_COLOR = "#000";           // 操作ブロックの色
-  const LOCK_COLOR = "#333";            // ロックしたブロックの色
-  const WALL_COLOR = "#666";            // 壁の色
-  const ERROR_COLOR = "#f00";           // エラーブロックの色
-  // ゲーム要素
-  const NEXTLEVEL = 10;                 // 次のレベルまでの消去ライン数
+const num = 150
+const length = 100
+// ステージ
+const BLOCK_SIZE = 24;        // 1ブロックのサイズ
+const BLOCK_ROWS = 22;    // ステージの高さ（20ライン分をステージとして使用し、上下1ラインはあたり判定とブロックコピー用に使用）
+const BLOCK_COLS = 18;    // ステージの幅
+const SCREEN_WIDTH = BLOCK_SIZE * BLOCK_COLS; // キャンバスの幅
+const SCREEN_HEIGHT = BLOCK_SIZE * BLOCK_ROWS;    // キャンバスの高さ
+// ゲームの状態
+const GAME = 1;           // ゲーム中
+const GAMEOVER = 0;       // ゲームオーバー時
+const EFFECT = 2;         // ブロックを消すときのエフェクトモード
+// ブロックの状態
+const NON_BLOCK = 0;      // ブロックが存在しない
+const NORMAL_BLOCK = 1;   // 通常のブロック（動かせる）
+const LOCK_BLOCK = 2;     // ロックした（動かせない）ブロック
+const CLEAR_BLOCK = 3;    // 消去するブロック（1ライン揃ったとき）
+const WALL = 9;           // 壁
+// 色
+const BACK_COLOR = "#ddd";            // 背景色
+const GAMEOVER_COLOR = "#fff";            // ゲームオーバー時のブロックの色
+const BLOCK_COLOR = "#000";           // 操作ブロックの色
+const LOCK_COLOR = "#333";            // ロックしたブロックの色
+const WALL_COLOR = "#666";            // 壁の色
+const ERROR_COLOR = "#f00";           // エラーブロックの色
+// ゲーム要素
+const NEXTLEVEL = 10;                 // 次のレベルまでの消去ライン数
 
-  /*
-   * グローバル変数
-   */
-  let stage = new Array(BLOCK_COLS);  // ゲームのステージ枠（壁の情報のみ、変化しない）
-  let field = new Array(BLOCK_COLS);      // ゲーム中のステージ枠とブロック表示用（変化する）
-  let blockSize;                             // ブロックサイズ
-  let speed;                          // 落下速度
-  let frame;                          // ゲームフレーム番号
-  let block = new Array();                // 落ちてくるブロックの種類（７種類）
-  let oBlock = new Array();               // 操作中のブロック
-  let blockType;                      // ブロックの種類番号
-  let mode;                           // ゲームの状態  GAME/GAMEOVER/EFFECT
-  let clearLine;                          // 消去したライン数
+/*
+ * グローバル変数
+ */
+let stage = new Array(BLOCK_COLS);  // ゲームのステージ枠（壁の情報のみ、変化しない）
+let field = new Array(BLOCK_COLS);      // ゲーム中のステージ枠とブロック表示用（変化する）
+let blockSize;                             // ブロックサイズ
+let speed;                          // 落下速度
+let frame;                          // ゲームフレーム番号
+let block = new Array();                // 落ちてくるブロックの種類（７種類）
+let oBlock = new Array();               // 操作中のブロック
+let blockType;                      // ブロックの種類番号
+let mode;                           // ゲームの状態  GAME/GAMEOVER/EFFECT
+let clearLine;                          // 消去したライン数
+
+let p5;
+export function mainGame(_p5) {
+  p5 = _p5
 
   p5.preload = _ => {
     img = p5.loadImage('img/download.png');
@@ -128,65 +130,128 @@ export function mainGame(p5) {
   }
 
   /*
-   * NOTE: ゲーム開始処理
+   * NOTE: 操作
    */
-  let newGame = function () {
-    setStage();
-    mode = GAME;
-    frame = 1;
-    speed = 80;
-    createBlock();
-    mainLoop();
-  }
-
-  /*
-   * NOTE: ステージ設定
-   */
-  let setStage = function (){
-      // 操作ブロックための配列
-      oBlock.fill(0)
-
-      stage = JSON.parse(JSON.stringify((new Array(BLOCK_ROWS)).fill((new Array(BLOCK_COLS)).fill(0))));
-      for (let y = 0; y < stage.length; y++) {
-        for (let x = 0; x < stage[y].length; x++) {
-          // NOTE: 上下の列は非表示
-          if (y === 0 || y === stage.length - 1) {
-            stage[y][x] = 0
-          } else if (x === 0 || x === stage[y].length - 1 ||
-            y === stage.length - 2 ) {
-              stage[y][x] = 9
-          }
-        }
-      }
-
-      // 表示するための配列
-      field = JSON.parse(JSON.stringify(stage))
-  }
-
-  /*
-   * NOTE: 新しいブロックを作成
-   */
-  let createBlock = function (){
+  let keyDownFunc = function (e){
       if(mode == EFFECT) return;
-      const x = Math.floor(BLOCK_COLS / 3);
-      const y = 0;
-      const blockType = Math.floor(Math.random() * block.length);
+      if(mode == GAME){
+          mino.setBlockType(field, NON_BLOCK)
+          mino.keepInterimPosition()
+          // sx = x; sy = y;
+          if(e.keyCode == 32){
+              rotateBlock();
+          }
+          else if(e.keyCode == 37){
+              mino.x--
+          }
+          else if(e.keyCode == 39){
+              mino.x++
+          }
+          else if(e.keyCode == 40){
+              mino.y++
+          }
 
-      // NOTE: ※2次元配列をディープコピーする
-      oBlock = JSON.parse(JSON.stringify(block[blockType]))
+          if(mino.hitCheck(field)){
+            mino.returnPosition()
+          }
 
-      mino = new TetrisMino(x, y, blockType, oBlock, blockSize)
-      if(mino.hitCheck(field)){
-          mode = GAMEOVER;
-          console.log("***GAMEOVER!");
+          putBlock();
       }
-      putBlock();
+      else if(mode == GAMEOVER){
+          if(e.keyCode == 13){
+              newGame();
+          }
+      }
   }
+}
 
-  /*
-   * NOTE: ゲームメイン
-   */
-  let mainLoop = function (){
+/*
+ * NOTE: ゲーム開始処理
+ */
+function newGame() {
+  setStage();
+  mode = GAME;
+  frame = 1;
+  speed = 80;
+  createBlock();
+  mainLoop();
+}
+
+/*
+ * NOTE: 新しいブロックを作成
+ */
+function createBlock() {
+    if(mode == EFFECT) return;
+    const x = Math.floor(BLOCK_COLS / 3);
+    const y = 0;
+    const blockType = Math.floor(Math.random() * block.length);
+
+    // NOTE: ※2次元配列をディープコピーする
+    oBlock = JSON.parse(JSON.stringify(block[blockType]))
+
+    mino = new TetrisMino(x, y, blockType, oBlock, blockSize)
+    if(mino.hitCheck(field)){
+        mode = GAMEOVER;
+        console.log("***GAMEOVER!");
+    }
+    putBlock();
+}
+
+/*
+ * NOTE: 描画処理
+ */
+function drawFixedBlocks() {
+    for(var i = 0; i < BLOCK_ROWS; i++){
+        for(var j = 0; j < BLOCK_COLS; j++){
+            switch(field[i][j]){
+                // なにもない
+                case NON_BLOCK:
+                    p5.fill(221, 221, 221)
+                    break;
+
+                // ブロック（ロック）
+                case LOCK_BLOCK:
+                    p5.fill(255, 0, 0)
+                    break;
+
+                // 消去ブロック
+                case CLEAR_BLOCK:
+                    p5.fill(0)
+                    break;
+
+                // 壁
+                case WALL:
+                    p5.fill(0, 0, 255)
+                    break;
+
+                // 重なったときの色
+                default:
+                    p5.fill(255, 255, 0)
+            }
+
+            p5.rect(j * blockSize, i * blockSize, blockSize - 1, blockSize - 1);
+        }
+    }
+}
+
+/*
+* NOTE: ブロックタイプをセットする
+*/
+function setBlockType(type) {
+  for(var i = 0; i < 4; i++){
+      for(var j = 0; j < 4; j++){
+          if(oBlock[i][j]) {
+            field[i + y][j + x] = type;
+          }
+      }
+  }
+}
+
+
+/*
+* NOTE: ゲームメイン
+*/
+function mainLoop() {
       if(mode == GAME){
           // 元の位置を保存
           mino.keepInterimPosition()
@@ -227,178 +292,115 @@ export function mainGame(p5) {
       if(speed < 1) speed = 1;
   }
 
-  /*
-   * NOTE: ブロックをステージにセットする
-   */
-  let putBlock = function () {
-      if(mode == EFFECT) return;
-      mino.setBlockInField(field)
-  }
+/*
+ * NOTE: ステージ設定
+ */
+function setStage() {
+    // 操作ブロックための配列
+    oBlock.fill(0)
 
-  /*
-   * NOTE: 描画処理
-   */
-  let drawFixedBlocks = function (){
-      for(var i = 0; i < BLOCK_ROWS; i++){
-          for(var j = 0; j < BLOCK_COLS; j++){
-              switch(field[i][j]){
-                  // なにもない
-                  case NON_BLOCK:
-                      p5.fill(221, 221, 221)
-                      break;
-
-                  // ブロック（ロック）
-                  case LOCK_BLOCK:
-                      p5.fill(255, 0, 0)
-                      break;
-
-                  // 消去ブロック
-                  case CLEAR_BLOCK:
-                      p5.fill(0)
-                      break;
-
-                  // 壁
-                  case WALL:
-                      p5.fill(0, 0, 255)
-                      break;
-
-                  // 重なったときの色
-                  default:
-                      p5.fill(255, 255, 0)
-              }
-
-              p5.rect(j * blockSize, i * blockSize, blockSize - 1, blockSize - 1);
-          }
+    stage = JSON.parse(JSON.stringify((new Array(BLOCK_ROWS)).fill((new Array(BLOCK_COLS)).fill(0))));
+    for (let y = 0; y < stage.length; y++) {
+      for (let x = 0; x < stage[y].length; x++) {
+        // NOTE: 上下の列は非表示
+        if (y === 0 || y === stage.length - 1) {
+          stage[y][x] = 0
+        } else if (x === 0 || x === stage[y].length - 1 ||
+          y === stage.length - 2 ) {
+            stage[y][x] = 9
+        }
       }
-  }
+    }
 
-  /*
-   * NOTE: ゲーム画面クリア
-   */
-  let clearWindow = function (){
-      p5.fill(221, 221, 221)
-      p5.rect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
-  }
+    // 表示するための配列
+    field = JSON.parse(JSON.stringify(stage))
+}
 
-  /*
-   * NOTE: ブロックタイプをセットする
-   */
-  let setBlockType = function (type) {
-    for(var i = 0; i < 4; i++){
-        for(var j = 0; j < 4; j++){
-            if(oBlock[i][j]) {
-              field[i + y][j + x] = type;
+/*
+ * NOTE: ブロックの回転処理
+ */
+function rotateBlock() {
+    if(mode == EFFECT) return;
+    mino.setBlockType(field, NON_BLOCK)
+    mino.rotate(field)
+}
+
+/*
+ * NOTE: そろったラインを消去する
+ */
+function deleteLine() {
+    if(mode == EFFECT) return;
+    for(var i = BLOCK_ROWS - 1; i >= 1; i--) {      // 下のラインから消去する
+        for(var j = 1; j < BLOCK_COLS - 1; j++) {   // 右端からチェック
+            if(field[i][j] == CLEAR_BLOCK) {
+                field[i][j] = field[i - 1][j];            // 一段落とす
+                for(var above = i - 1; above >= 1; above--){   //  そこからまた上を一段ずつおとしていく
+                    field[above][j] = field[above - 1][j];
+                }
+                i++;        // 落としたラインもまた、消去ラインだったときの対処
             }
         }
     }
-  }
+}
 
-  /*
-   * NOTE: ブロックをロック（動かせないように）する
-   */
-  let lockBlock = function () {
-      if(mode == EFFECT) return;
-      setBlockType(oBlock, LOCK_BLOCK)
-  }
+/*
+ * NOTE: ゲーム画面クリア
+ */
+function clearWindow() {
+    p5.fill(221, 221, 221)
+    p5.rect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
+}
 
-  /*
-   * NOTE: ラインが揃ったかチェックする
-   */
-  let lineCheck = function (){
-      if(mode == EFFECT) return;
-      var count;
-      var lineCount = 0;          // 何ライン揃ったか？
-      for(let i = 1; i < BLOCK_ROWS - 2; i++){
-          count = 0;  // 1ライン上に揃ったブロックの数
-          for(let j = 0; j < BLOCK_COLS; j++){     // 右端からチェック
-              if(field[i][j]) count++;
-              else break;
-          }
-          if(count >= BLOCK_COLS){     // 1ライン揃った！
-              lineCount++;
-              clearLine++;
-              for(let j = 1; j < BLOCK_COLS - 1; j++) {
-                field[i][j] = CLEAR_BLOCK;     // 消去ブロックにする
-              }
-          }
-      }
-      return lineCount;       // 消去ライン数を返す（現在、この戻り値は未使用）
-  }
+/*
+ * NOTE: ゲームオーバー処理
+ */
+ function gameOver() {
+    for(var i=0; i<BLOCK_ROWS; i++){
+        for(var j=0; j<BLOCK_COLS; j++){
+            if(field[i][j] && field[i][j] != WALL){ // ブロックのみ色を変える
+                p5.fill(255)
+                p5.rect(j*blockSize, i*blockSize, blockSize-1, blockSize-1);
+            }
+        }
+    }
+}
 
-  /*
-   * NOTE: 操作
-   */
-  let keyDownFunc = function (e){
-      if(mode == EFFECT) return;
-      if(mode == GAME){
-          mino.setBlockType(field, NON_BLOCK)
-          mino.keepInterimPosition()
-          // sx = x; sy = y;
-          if(e.keyCode == 32){
-              rotateBlock();
-          }
-          else if(e.keyCode == 37){
-              mino.x--
-          }
-          else if(e.keyCode == 39){
-              mino.x++
-          }
-          else if(e.keyCode == 40){
-              mino.y++
-          }
+/*
+ * NOTE: ブロックをロック（動かせないように）する
+ */
+function lockBlock() {
+    if(mode == EFFECT) return;
+    setBlockType(oBlock, LOCK_BLOCK)
+}
 
-          if(mino.hitCheck(field)){
-            mino.returnPosition()
-          }
+/*
+ * NOTE: ラインが揃ったかチェックする
+ */
+function lineCheck() {
+    if(mode == EFFECT) return;
+    var count;
+    var lineCount = 0;          // 何ライン揃ったか？
+    for(let i = 1; i < BLOCK_ROWS - 2; i++){
+        count = 0;  // 1ライン上に揃ったブロックの数
+        for(let j = 0; j < BLOCK_COLS; j++){     // 右端からチェック
+            if(field[i][j]) count++;
+            else break;
+        }
+        if(count >= BLOCK_COLS){     // 1ライン揃った！
+            lineCount++;
+            clearLine++;
+            for(let j = 1; j < BLOCK_COLS - 1; j++) {
+              field[i][j] = CLEAR_BLOCK;     // 消去ブロックにする
+            }
+        }
+    }
+    return lineCount;       // 消去ライン数を返す（現在、この戻り値は未使用）
+}
 
-          putBlock();
-      }
-      else if(mode == GAMEOVER){
-          if(e.keyCode == 13){
-              newGame();
-          }
-      }
-  }
-
-  /*
-   * NOTE: ブロックの回転処理
-   */
-  let rotateBlock = function (){
-      if(mode == EFFECT) return;
-      mino.setBlockType(field, NON_BLOCK)
-      mino.rotate(field)
-  }
-
-  /*
-   * NOTE: そろったラインを消去する
-   */
-  let deleteLine = function (){
-      if(mode == EFFECT) return;
-      for(var i = BLOCK_ROWS - 1; i >= 1; i--) {      // 下のラインから消去する
-          for(var j = 1; j < BLOCK_COLS - 1; j++) {   // 右端からチェック
-              if(field[i][j] == CLEAR_BLOCK) {
-                  field[i][j] = field[i - 1][j];            // 一段落とす
-                  for(var above = i - 1; above >= 1; above--){   //  そこからまた上を一段ずつおとしていく
-                      field[above][j] = field[above - 1][j];
-                  }
-                  i++;        // 落としたラインもまた、消去ラインだったときの対処
-              }
-          }
-      }
-  }
-
-
-  /*
-   * NOTE: ゲームオーバー処理
-   */
-  let gameOver = function (){
-      for(var i=0; i<BLOCK_ROWS; i++){
-          for(var j=0; j<BLOCK_COLS; j++){
-              if(field[i][j] && field[i][j] != WALL){ // ブロックのみ色を変える
-                  p5.fill(255)
-                  p5.rect(j*blockSize, i*blockSize, blockSize-1, blockSize-1);
-              }
-          }
-      }
-  }
+/*
+ * NOTE: ブロックをステージにセットする
+ */
+function putBlock () {
+    if(mode == EFFECT) return;
+    mino.setBlockInField(field)
 }

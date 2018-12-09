@@ -43,6 +43,7 @@ export default {
 
   video {
     opacity: .65;
+    display: none;
     top: 0;
     left: 0;
     right: 0;
