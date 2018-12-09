@@ -169,15 +169,47 @@ export function mainGame(_p5) {
 /*
   NOTE: ミノブロックの位置をボーンデータに応じて更新させる
   @param keypoins : ボーンポジションデータ
+  0:"nose"
+  1:"leftEye"
+  2:"rightEye"
+  3:"leftEar"
+  4:"rightEar"
+  5:"leftShoulder"
+  6:"rightShoulder"
+  7:"leftElbow"
+  8:"rightElbow"
+  9:"leftWrist"
+  10:"rightWrist"
+  11:"leftHip"
+  12:"rightHip"
+  13:"leftKnee"
+  14:"rightKnee"
+  15:"leftAnkle"
+  16:"rightAnkle"
 */
 export function updateMinoPosition(keypoints) {
   if(mode == GAME){
       mino.setBlockType(field, NON_BLOCK)
       mino.keepInterimPosition()
 
-      const nose = keypoints[0];
-      const mapval = Math.floor(p5.map(nose.position.x, 0, width, 1, BLOCK_COLS - 1))
-      mino.x = mapval;
+      const rightSholder = keypoints[5]
+      const leftSholder = keypoints[6]
+      if (rightSholder.score > 0.5 && leftSholder.score > 0.5) {
+        // 左肩と右肩の中点をx座標とする
+        const posX = (rightSholder.position.x + leftSholder.position.x) / 2;
+        const mapval = Math.floor(p5.map(posX, 0, width, 1, BLOCK_COLS - 1))
+        mino.x = mapval;
+
+      }
+
+      // NOTE: 左右の目の座標から傾きを算出
+      //       傾きが一定以上であれば回転
+      const leftEye = keypoints[1].position;
+      const rightEye = keypoints[2].position;
+      const slope = (leftEye.y - rightEye.y) / (leftEye.x - rightEye.x)
+      if (slope > 1.0) {
+        rotateBlock()
+      }
 
       if(mino.hitCheck(field)){
         mino.returnPosition()
@@ -194,7 +226,7 @@ function newGame() {
   setStage();
   mode = GAME;
   frame = 1;
-  speed = 80;
+  speed = 20;
   createBlock();
   mainLoop();
 }
@@ -204,7 +236,7 @@ function newGame() {
  */
 function createBlock() {
     if(mode == EFFECT) return;
-    const x = Math.floor(BLOCK_COLS / 3);
+    const x = mino === undefined ? Math.floor(BLOCK_COLS / 3) : mino.x;
     const y = 0;
     const blockType = Math.floor(Math.random() * block.length);
 
