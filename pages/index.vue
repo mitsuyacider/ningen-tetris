@@ -4,7 +4,7 @@
       <video id="video" width="640px" height="480px" autoplay="1" style="position:absolute;"></video>
       <canvas id="canvas" width="640px" height="480px" style="position:absolute;"></canvas>
     </div>
-    <tetris-frame />
+    <tetris-frame ref="tetris" />
   </div>
 </template>
 
@@ -23,7 +23,8 @@ export default {
   },
   data () {
     return {
-      posenet: {}
+      posenet: {},
+      keypoints: []
     }
   },
   mounted () {
@@ -31,6 +32,7 @@ export default {
   },
   methods: {
     callbackDelegate(keypoints, score) {
+      this.$refs.tetris.setKeyPoints(keypoints);
     }
   }
 }
