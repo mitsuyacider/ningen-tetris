@@ -6,24 +6,39 @@
     </div><!-- /Header -->
 
     <!-- Main Contents -->
+    <!-- tetris container -->
     <div class="row border">
-      <div class="col-md-6 border">
+      <div class="tetris-container col-md-6 border">
         <div class="human-container" style="d-flex justify-content-center">
           <video id="video" width="640px" height="480px" autoplay="1" style="position:absolute;"></video>
           <canvas id="canvas" width="640px" height="480px" style="position:absolute;"></canvas>
         </div>
         <tetris-frame ref="tetris" />
-      </div>
-      <div class="col-md-6 mb-3 border">
-        <h3 class="mb-3">Mr. M COFFEEについて</h3>
-        <p class="text-left">Mr. M COFFEE(ミスターえむコーヒー)は、店主が焙煎した
-          こだわりのコーヒーを最高の空間とおもてなしで提要する自家焙煎のカフェです。
-          店主が世界中のコーヒー豆を厳選し、コーヒー豆の種類に合わせ、心を込めて焙煎、抽出しております。
-          また、女性にちょうど良いボリュームのワンプレートランチ、季節のスイーツなどもご好評いただいております。
-        </p>
-        <a href="#menu" class="btn btn-info">メニューを見る</a>
-        <a href="#shop" class="btn btn-info">店舗情報を見る</a>
-      </div>
+      </div><!-- /tetris container -->
+
+      <!-- info container -->
+      <div class="info-container col-md-6 mb-3 border">
+        <!-- score -->
+        <div class="score-container row">
+          <div class="score-box col-md-6">
+            <h2 class="mb-3">SCORE</h2>
+            <p class="text-left">1000</p>
+          </div>
+        </div><!-- /score -->
+        <!-- howto -->
+        <div class="howto-container row">
+          <div class="move-box col-md-6">
+            <img class="img-fluid" src="@/assets/img/move.png" alt="">
+          </div>
+          <div class="rotate-box col-md-6">
+            <img class="img-fluid" src="@/assets/img/rotate.png" alt="">
+          </div>
+        </div><!-- /howto -->        
+        <div class="mino-info-container row">
+          <a href="#menu" class="btn btn-info col-md-6">メニューを見る</a>
+          <a href="#shop" class="btn btn-info col-md-6">店舗情報を見る</a>
+        </div>
+      </div><!-- /info container -->
     </div><!-- /Main Contents -->
   </div>
 </template>
@@ -64,9 +79,11 @@ export default {
 body {
   background: #3C2E40;
 }
+
 .header {
   color: #87C166;
 }
+
 .human-container {
   video {
     opacity: .65;
@@ -77,6 +94,7 @@ body {
     bottom: 0;
     margin: auto;
   }
+
   canvas {
     opacity:.65;
     top: 0;
