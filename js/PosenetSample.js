@@ -16,9 +16,10 @@ const nmsRadius = 30.0;
 
 let callbackDelegate;
 
-bindPage();
-
 export const sqrt = Math.sqrt;
+export function startPosenet() {
+  bindPage();
+}
 
 export function setDelegate(delegate) {
   callbackDelegate = delegate
