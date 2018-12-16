@@ -3,16 +3,17 @@ import TetrisMino from '@/js/TetrisMino.js';
 export let mino;
 
 let img
-let width = 640
-let height = 800
+let width = 550
+let height = 750
 
 const num = 150
 const length = 100
 // ステージ
-const BLOCK_SIZE = 24;        // 1ブロックのサイズ
-const BLOCK_ROWS = 22;    // ステージの高さ（20ライン分をステージとして使用し、上下1ラインはあたり判定とブロックコピー用に使用）
-// const BLOCK_COLS = 18;    // ステージの幅
-const BLOCK_COLS = 26;    // ステージの幅
+const BLOCK_SIZE = 27;        // 1ブロックのサイズ
+
+let BLOCK_ROWS;    // ステージの高さ（20ライン分をステージとして使用し、上下1ラインはあたり判定とブロックコピー用に使用）
+let BLOCK_COLS;    // ステージの幅
+
 const SCREEN_WIDTH = BLOCK_SIZE * BLOCK_COLS; // キャンバスの幅
 const SCREEN_HEIGHT = BLOCK_SIZE * BLOCK_ROWS;    // キャンバスの高さ
 // ゲームの状態
@@ -61,8 +62,9 @@ export function mainGame(_p5) {
   }
 
   p5.setup = _ => {
-    // var canvas = p5.createCanvas(width, height)
-    // canvas.parent(this.$refs.canvas)
+
+    BLOCK_ROWS = Math.floor(height / BLOCK_SIZE);    // ステージの高さ（20ライン分をステージとして使用し、上下1ラインはあたり判定とブロックコピー用に使用）
+    BLOCK_COLS = Math.floor(width / BLOCK_SIZE);    // ステージの幅
 
     // NOTE: キャンバスを親要素のキャンバス内に配置するようにする
     // http://p5aholic.hatenablog.com/entry/2015/05/16/163251
