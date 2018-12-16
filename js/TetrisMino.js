@@ -107,12 +107,13 @@ export default class TetrisMino {
 
    drawMinoBlock(p5) {
      // 身のブロックを描画
+     p5.push();
      p5.fill(255,0,0);
      const blockSize = this.blockSize;
      for (var i = 0; i < 4; i++) {
        for (var j = 0; j < 4; j++) {
          if(this.oBlock[i][j]) {
-           p5.fill(0)
+           p5.fill(255, 0, 0)
            p5.rect((this.x + j) * blockSize, (this.y + i) * blockSize, blockSize - 1, blockSize - 1);
          }
        }
@@ -124,5 +125,6 @@ export default class TetrisMino {
      const radius = blockSize * 5;
      p5.ellipseMode(p5.CORNER);
      p5.ellipse((this.x - 1) * blockSize, (this.y - 1) * blockSize, radius, radius);
+     p5.pop();
    }
 }

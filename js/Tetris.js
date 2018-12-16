@@ -71,7 +71,7 @@ export function mainGame(_p5) {
     var canvas = p5.createCanvas(width, height)
     canvas.parent("p5Canvas");
     // p5.createCanvas(width, height)
-    p5.background(0)
+    p5.background(60, 46, 64)
 
 
 
@@ -126,7 +126,7 @@ export function mainGame(_p5) {
   }
 
   p5.draw = _ => {
-    p5.background(0)
+    p5.background(60, 46, 64)
 
     mainLoop()
     p5.text(Math.floor(p5.frameRate()), 550, 50)
@@ -252,7 +252,7 @@ function newGame() {
   setStage();
   mode = GAME;
   frame = 1;
-  speed = 20;
+  speed = 5;
   createBlock();
   mainLoop();
 }
@@ -281,37 +281,40 @@ function createBlock() {
  * NOTE: 描画処理
  */
 function drawFixedBlocks() {
+    p5.push();
     for(var i = 0; i < BLOCK_ROWS; i++){
         for(var j = 0; j < BLOCK_COLS; j++){
             switch(field[i][j]){
                 // なにもない
                 case NON_BLOCK:
-                    p5.fill(221, 221, 221)
+                    p5.stroke(204);
+                    p5.fill(247, 241, 213);
                     break;
 
                 // ブロック（ロック）
                 case LOCK_BLOCK:
-                    p5.fill(255, 0, 0)
+                    p5.fill(255, 0, 0);
                     break;
 
                 // 消去ブロック
                 case CLEAR_BLOCK:
-                    p5.fill(0)
+                    p5.fill(0);
                     break;
 
                 // 壁
                 case WALL:
-                    p5.fill(0, 0, 255)
+                    p5.fill(204);
                     break;
 
                 // 重なったときの色
                 default:
-                    p5.fill(255, 255, 0)
+                    p5.fill(204, 0, 0);
             }
 
             p5.rect(j * blockSize, i * blockSize, blockSize - 1, blockSize - 1);
         }
     }
+    p5.pop();
 }
 
 /*
@@ -427,14 +430,17 @@ function deleteLine() {
  * NOTE: ゲーム画面クリア
  */
 function clearWindow() {
+    p5.push();
     p5.fill(221, 221, 221)
     p5.rect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
+    p5.pop();
 }
 
 /*
  * NOTE: ゲームオーバー処理
  */
  function gameOver() {
+    p5.push();
     for(var i=0; i<BLOCK_ROWS; i++){
         for(var j=0; j<BLOCK_COLS; j++){
             if(field[i][j] && field[i][j] != WALL){ // ブロックのみ色を変える
@@ -443,6 +449,7 @@ function clearWindow() {
             }
         }
     }
+    p5.pop();
 }
 
 /*
