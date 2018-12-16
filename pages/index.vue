@@ -20,9 +20,9 @@
       <div class="info-container col-md-6 mb-3 border">
         <!-- score -->
         <div class="score-container row">
-          <div class="score-box col-md-6">
-            <h2 class="mb-3">SCORE</h2>
-            <p class="text-left">1000</p>
+          <div class="position-relative score-box col-md-6">
+            <img class="img-fluid" src="@/assets/img/score.png" alt="">
+            <span class="score position-absolute">1000</span>
           </div>
         </div><!-- /score -->
         <!-- howto -->
@@ -35,8 +35,6 @@
           </div>
         </div><!-- /howto -->        
         <div class="mino-info-container row">
-          <a href="#menu" class="btn btn-info col-md-6">メニューを見る</a>
-          <a href="#shop" class="btn btn-info col-md-6">店舗情報を見る</a>
         </div>
       </div><!-- /info container -->
     </div><!-- /Main Contents -->
@@ -60,7 +58,10 @@ export default {
   data () {
     return {
       posenet: {},
-      keypoints: []
+      keypoints: [],
+      pStyle: {
+        'background-image': 'url(' + require('@/assets/img/score.png') + ')'
+      }
     }
   },
   mounted () {
@@ -78,6 +79,12 @@ export default {
 <style lang="scss">
 body {
   background: #3C2E40;
+}
+
+.score-box {
+  // background-size: cover;
+  // background-image: url('../assets/img/score.png');
+  // background-repeat: no-repeat;
 }
 
 .header {
@@ -104,6 +111,19 @@ body {
     margin: auto;
 
   }
+}
+
+.score {
+  top: 50px;
+  left: 32px;
+  font-size: 30px;
+  letter-spacing: 25px;
+  color: #F597AB;
+  // font-family: 'Osaka';
+}
+
+.howto-container {
+  margin-top: 50px;
 }
 
 table td {
