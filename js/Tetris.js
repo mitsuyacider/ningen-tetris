@@ -166,6 +166,11 @@ export function mainGame(_p5) {
   }
 }
 
+export function updateLayout(keypoints) {
+  updateMinoPosition(keypoints);
+  // drawMiniCharacter(keypoints);
+}
+
 /*
   NOTE: ミノブロックの位置をボーンデータに応じて更新させる
   @param keypoins : ボーンポジションデータ
@@ -187,20 +192,23 @@ export function mainGame(_p5) {
   15:"leftAnkle"
   16:"rightAnkle"
 */
-export function updateMinoPosition(keypoints) {
+function updateMinoPosition(keypoints) {
   if(mode == GAME){
       mino.setBlockType(field, NON_BLOCK)
       mino.keepInterimPosition()
 
-      const rightSholder = keypoints[5]
-      const leftSholder = keypoints[6]
-      if (rightSholder.score > 0.5 && leftSholder.score > 0.5) {
-        // 左肩と右肩の中点をx座標とする
-        const posX = (rightSholder.position.x + leftSholder.position.x) / 2;
-        const mapval = Math.floor(p5.map(posX, 0, width, 1, BLOCK_COLS - 1))
-        mino.x = mapval;
+      // const rightSholder = keypoints[5]
+      // const leftSholder = keypoints[6]
+      // if (rightSholder.score > 0.5 && leftSholder.score > 0.5) {
+      //   // 左肩と右肩の中点をx座標とする
+      //   const posX = (rightSholder.position.x + leftSholder.position.x) / 2;
+      //   const mapval = Math.floor(p5.map(posX, 0, width, 1, BLOCK_COLS - 1))
+      //   mino.x = mapval;
+      // }
 
-      }
+      const posX = keypoints[0].position.x;
+      const mapval = Math.floor(p5.map(posX, 0, width, 1, BLOCK_COLS - 1))
+      mino.x = mapval;
 
       // NOTE: 左右の目の座標から傾きを算出
       //       傾きが一定以上であれば回転
@@ -217,6 +225,22 @@ export function updateMinoPosition(keypoints) {
 
       putBlock();
   }
+}
+
+function drawMiniCharacter(keypoints) {
+  // if(mode == GAME){
+  //   // p5.ellipseMode(p5.CENTER);
+  //   p5.fill(255, 0, 255);
+  //   p5.stroke(0, 0, 255);
+  //   p5.ellipse(500, 400, 100, 100);
+  //
+  //   // p5.push();
+  //   // // p5.translate((mino.x + 2) * blockSize, (mino.y + 4) * blockSize)
+  //   // p5.fill(0, 0, 255);
+  //   // p5.ellipse(0, 0, 10, 10);
+  //   //
+  //   // p5.pop();
+  // }
 }
 
 /*

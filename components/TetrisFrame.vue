@@ -21,7 +21,7 @@ export default {
   },
   methods: {
     setKeyPoints: function(keypoints) {
-      tetris.updateMinoPosition(keypoints)
+      tetris.updateLayout(keypoints)
     }
   },
   mounted () {
