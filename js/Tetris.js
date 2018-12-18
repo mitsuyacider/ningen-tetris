@@ -21,6 +21,7 @@ const GAME = 1;           // ゲーム中
 const GAMEOVER = 0;       // ゲームオーバー時
 const EFFECT = 2;         // ブロックを消すときのエフェクトモード
 // ブロックの状態
+const INVISIVLE_BLOCK = -1;
 const NON_BLOCK = 0;      // ブロックが存在しない
 const NORMAL_BLOCK = 1;   // 通常のブロック（動かせる）
 const LOCK_BLOCK = 2;     // ロックした（動かせない）ブロック
@@ -286,6 +287,11 @@ function drawFixedBlocks() {
             p5.push();
             switch(field[i][j]){
                 // なにもない
+                case INVISIVLE_BLOCK:
+                    p5.noFill();
+                    p5.noStroke();
+                break;
+
                 case NON_BLOCK:
                     p5.stroke(204);
                     p5.fill(247, 241, 213);
@@ -318,20 +324,6 @@ function drawFixedBlocks() {
         }
     }
 }
-
-/*
-* NOTE: ブロックタイプをセットする
-*/
-function setBlockType(type) {
-  for(var i = 0; i < 4; i++){
-      for(var j = 0; j < 4; j++){
-          if(oBlock[i][j]) {
-            field[i + y][j + x] = type;
-          }
-      }
-  }
-}
-
 
 /*
 * NOTE: ゲームメイン
@@ -389,10 +381,10 @@ function setStage() {
       for (let x = 0; x < stage[y].length; x++) {
         // NOTE: 上下の列は非表示
         if (y === 0 || y === stage.length - 1) {
-          stage[y][x] = 0
+          stage[y][x] = INVISIVLE_BLOCK
         } else if (x === 0 || x === stage[y].length - 1 ||
           y === stage.length - 2 ) {
-            stage[y][x] = 9
+            stage[y][x] = WALL
         }
       }
     }
@@ -456,6 +448,7 @@ function clearWindow() {
 
 /*
  * NOTE: ブロックをロック（動かせないように）する
+ *        effect時に使用する
  */
 function lockBlock() {
     if(mode == EFFECT) return;
