@@ -18,12 +18,6 @@ export default class Block {
             console.log('This function is not regsted : ' + name)
         }
     }  
-
-    data () {
-        console.log('**data');
-        
-        return 124
-    }
     
     drawPattern1 (info) {
         const p5 = info.p5

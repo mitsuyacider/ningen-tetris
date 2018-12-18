@@ -29,7 +29,13 @@ export default class TetrisMino {
     NOTE: 座標位置を戻す
   */
   replaceBlock(block) {
-    this.oBlock = JSON.parse(JSON.stringify(block))
+    // this.oBlock = JSON.parse(JSON.stringify(block))
+
+    for(var i = 0; i < 4; i++) {
+      for(var j = 0; j < 4; j++) {
+        this.oBlock[i][j].blockType = block[i][j].blockType;                
+      }
+    }
   }
 
   /**
@@ -38,15 +44,17 @@ export default class TetrisMino {
   rotate(field) {
     const tBlock = JSON.parse(JSON.stringify(this.oBlock))
 
+    
     for(var i = 0; i < 4; i++) {
       for(var j = 0; j < 4; j++) {
-          this.oBlock[i][j] = tBlock[3-j][i];
+        this.oBlock[i][j].blockType = tBlock[3-j][i].blockType;                
       }
     }
 
     const isHitted = this.hitCheck(field)
     if(isHitted) {
-        // 元に戻す
+      console.log("hit ****");
+      // 元に戻す
         this.replaceBlock(tBlock)
     }
   }

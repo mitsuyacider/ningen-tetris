@@ -269,18 +269,28 @@ function createBlock() {
     const blockType = Math.floor(Math.random() * block.length);
 
     // NOTE: ※2次元配列をディープコピーする (値渡しで変更されることを防ぐ目的)
-    const newMino = [ 
-        [new Block(NON_BLOCK), new Block(NON_BLOCK), new Block(NON_BLOCK), new Block(NON_BLOCK)],
-        [new Block(NON_BLOCK), new Block(NORMAL_BLOCK), new Block(NORMAL_BLOCK), new Block(NON_BLOCK)],
-        [new Block(NON_BLOCK), new Block(NORMAL_BLOCK), new Block(NORMAL_BLOCK), new Block(NON_BLOCK)],
-        [new Block(NON_BLOCK), new Block(NON_BLOCK), new Block(NON_BLOCK), new Block(NON_BLOCK)]
-    ]
+    // const newMino = [ 
+    //     [new Block(NON_BLOCK), new Block(NON_BLOCK), new Block(NON_BLOCK), new Block(NON_BLOCK)],
+    //     [new Block(NON_BLOCK), new Block(NORMAL_BLOCK), new Block(NORMAL_BLOCK), new Block(NON_BLOCK)],
+    //     [new Block(NON_BLOCK), new Block(NORMAL_BLOCK), new Block(NORMAL_BLOCK), new Block(NON_BLOCK)],
+    //     [new Block(NON_BLOCK), new Block(NON_BLOCK), new Block(NON_BLOCK), new Block(NON_BLOCK)]
+    // ]
+
+    const newMino = JSON.parse(JSON.stringify((new Array(4)).fill((new Array(4)).fill(0))));
+
+    const arr = block[blockType]
+    for (let i = 0; i < 4; i++) {
+        for (let j = 0; j < 4; j++) {
+            let b;
+            if (arr[i][j] == 1) {
+                b = new Block(NORMAL_BLOCK)
+            } else {
+                b = new Block(NON_BLOCK)
+            }
+            newMino[i][j] = b
+        }
+    }
     
-    // oBlock = JSON.parse(JSON.stringify(block[blockType]))
-    oBlock = JSON.parse(JSON.stringify(newMino))
-    // mino = new TetrisMino(x, y, blockType, oBlock, blockSize)
-
-
     mino = new TetrisMino(x, y, blockType, newMino, blockSize)
     if(mino.gameOverCheck(field)){
         mode = GAMEOVER;
@@ -366,7 +376,6 @@ function mainLoop() {
       }
       else if(mode == GAMEOVER){
           gameOver();
-          newGame();
       }
       else if(mode == EFFECT){
       }
