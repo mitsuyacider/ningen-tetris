@@ -236,7 +236,7 @@ function drawMiniCharacter(keypoints) {
   //   p5.stroke(0, 0, 255);
   //   p5.ellipse(500, 400, 100, 100);
   //
-  //   // p5.push();
+  //   // p5.push(); 
   //   // // p5.translate((mino.x + 2) * blockSize, (mino.y + 4) * blockSize)
   //   // p5.fill(0, 0, 255);
   //   // p5.ellipse(0, 0, 10, 10);
@@ -252,7 +252,7 @@ function newGame() {
   setStage();
   mode = GAME;
   frame = 1;
-  speed = 5;
+  speed = 20;
   createBlock();
   mainLoop();
 }
@@ -281,9 +281,9 @@ function createBlock() {
  * NOTE: 描画処理
  */
 function drawFixedBlocks() {
-    p5.push();
     for(var i = 0; i < BLOCK_ROWS; i++){
         for(var j = 0; j < BLOCK_COLS; j++){
+            p5.push();
             switch(field[i][j]){
                 // なにもない
                 case NON_BLOCK:
@@ -308,13 +308,15 @@ function drawFixedBlocks() {
 
                 // 重なったときの色
                 default:
-                    p5.fill(204, 0, 0);
+                    p5.stroke(204);
+                    p5.fill(247, 241, 213);
+                // p5.fill(204, 255, 0);
             }
 
             p5.rect(j * blockSize, i * blockSize, blockSize - 1, blockSize - 1);
+            p5.pop();
         }
     }
-    p5.pop();
 }
 
 /*
