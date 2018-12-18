@@ -10,7 +10,7 @@ let height = 750
 const num = 150
 const length = 100
 // ステージ
-const BLOCK_SIZE = 27;        // 1ブロックのサイズ
+const BLOCK_SIZE = 34;        // 1ブロックのサイズ
 
 let BLOCK_ROWS;    // ステージの高さ（20ライン分をステージとして使用し、上下1ラインはあたり判定とブロックコピー用に使用）
 let BLOCK_COLS;    // ステージの幅
@@ -264,26 +264,23 @@ function newGame() {
  */
 function createBlock() {
     if(mode == EFFECT) return;
-    const x = mino === undefined ? Math.floor(BLOCK_COLS / 3) : mino.x;
+    // const x = mino === undefined ? Math.floor(BLOCK_COLS / 3) : mino.x;
+    const x = Math.floor(BLOCK_COLS / 3)
     const y = 0;
     const blockType = Math.floor(Math.random() * block.length);
 
     // NOTE: ※2次元配列をディープコピーする (値渡しで変更されることを防ぐ目的)
-    // const newMino = [ 
-    //     [new Block(NON_BLOCK), new Block(NON_BLOCK), new Block(NON_BLOCK), new Block(NON_BLOCK)],
-    //     [new Block(NON_BLOCK), new Block(NORMAL_BLOCK), new Block(NORMAL_BLOCK), new Block(NON_BLOCK)],
-    //     [new Block(NON_BLOCK), new Block(NORMAL_BLOCK), new Block(NORMAL_BLOCK), new Block(NON_BLOCK)],
-    //     [new Block(NON_BLOCK), new Block(NON_BLOCK), new Block(NON_BLOCK), new Block(NON_BLOCK)]
-    // ]
-
     const newMino = JSON.parse(JSON.stringify((new Array(4)).fill((new Array(4)).fill(0))));
 
     const arr = block[blockType]
+    const pattern = Math.floor( Math.random() * (4 + 1 - 1) ) + 1
+    // const pattern = 3
     for (let i = 0; i < 4; i++) {
         for (let j = 0; j < 4; j++) {
             let b;
             if (arr[i][j] == 1) {
                 b = new Block(NORMAL_BLOCK)
+                b.pattern = pattern
             } else {
                 b = new Block(NON_BLOCK)
             }
@@ -305,41 +302,61 @@ function drawFixedBlocks() {
     for(var i = 0; i < BLOCK_ROWS; i++){
         for(var j = 0; j < BLOCK_COLS; j++){
             p5.push();
+                    // NOTE: 上下の列は非表示
+            if (i === 0 || i === field.length - 1) {
+                field[i][j].blockType = INVISIVLE_BLOCK
+            } 
             switch(field[i][j].blockType){
                 // なにもない
                 case INVISIVLE_BLOCK:
                     p5.noFill();
                     p5.noStroke();
-                break;
+                    p5.rect(j * blockSize, i * blockSize, blockSize - 1, blockSize - 1);
+                    break;
 
                 case NON_BLOCK:
                     p5.stroke(204);
                     p5.fill(247, 241, 213);
+                    p5.rect(j * blockSize, i * blockSize, blockSize - 1, blockSize - 1);
                     break;
 
                 // ブロック（ロック）
                 case LOCK_BLOCK:
-                    p5.fill(255, 0, 0);
+                    
+                    const x = j * blockSize;
+                    const y = i * blockSize;
+                    const size = blockSize - 1;
+                    // p5.rect((this.x + j) * blockSize, (this.y + i) * blockSize, blockSize - 1, blockSize - 1);
+                    const info = {
+                      p5: p5,
+                      x: x,
+                      y: y,
+                      w: size,
+                      h: size
+                    }  
+                    field[i][j].registerFunction(info);
                     break;
 
                 // 消去ブロック
                 case CLEAR_BLOCK:
                     p5.fill(0);
+                    p5.rect(j * blockSize, i * blockSize, blockSize - 1, blockSize - 1);
                     break;
 
                 // 壁
                 case WALL:
                     p5.fill(204);
+                    p5.rect(j * blockSize, i * blockSize, blockSize - 1, blockSize - 1);
                     break;
 
                 // 重なったときの色
                 default:
-                    p5.stroke(204);
-                    p5.fill(247, 241, 213);
-                // p5.fill(204, 255, 0);
+                    // p5.stroke(204);
+                    // p5.fill(247, 241, 213);
+                    // p5.rect(j * blockSize, i * blockSize, blockSize - 1, blockSize - 1);
+                    // p5.fill(204, 255, 0);
             }
 
-            p5.rect(j * blockSize, i * blockSize, blockSize - 1, blockSize - 1);
             p5.pop();
         }
     }
@@ -359,11 +376,21 @@ function mainLoop() {
               mino.drop(field, () => {
                 mino.setBlockType(field, LOCK_BLOCK)
 
-                if(lineCheck() > 0) {
+                const deleteLineNum = lineCheck()
+                if(deleteLineNum > 0) {
                     // FIXME: 消えるアニメーションを追加する
                     // mode = EFFECT;
                     mode = GAME;
                     deleteLine();
+                    console.log(deleteLineNum)
+                    // NOTE: 消去ライン分だけnone blockを追加する
+                    for (let i = 1; i < deleteLineNum + 1; i++) {
+                        for (let j = 0; j < BLOCK_COLS; j++) {
+                            if (field[i][j].blockType !== WALL) {
+                                field[i][j].blockType = NON_BLOCK
+                            }
+                        }
+                    }
                 }
                 createBlock()
               })
@@ -412,8 +439,8 @@ function setStage() {
     }
 
     // 表示するための配列
-    field = JSON.parse(JSON.stringify(stage))
-    // field = stage
+    // field = JSON.parse(JSON.stringify(stage))
+    field = stage
 }
 
 /*

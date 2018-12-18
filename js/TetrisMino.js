@@ -8,8 +8,6 @@ export default class TetrisMino {
     this.y = this.sy = _y
     this.oBlock = _block
     this.blockSize = _blockSize
-    this.patternNum = 2
-    this.pattern = 1;
   }
 
   /**
@@ -34,6 +32,7 @@ export default class TetrisMino {
     for(var i = 0; i < 4; i++) {
       for(var j = 0; j < 4; j++) {
         this.oBlock[i][j].blockType = block[i][j].blockType;                
+        this.oBlock[i][j].pattern = block[i][j].pattern
       }
     }
   }
@@ -47,13 +46,13 @@ export default class TetrisMino {
     
     for(var i = 0; i < 4; i++) {
       for(var j = 0; j < 4; j++) {
-        this.oBlock[i][j].blockType = tBlock[3-j][i].blockType;                
+        this.oBlock[i][j].blockType = tBlock[3-j][i].blockType;
+        this.oBlock[i][j].pattern = tBlock[3-j][i].pattern;
       }
     }
 
     const isHitted = this.hitCheck(field)
     if(isHitted) {
-      console.log("hit ****");
       // 元に戻す
         this.replaceBlock(tBlock)
     }
@@ -66,7 +65,7 @@ export default class TetrisMino {
      for(var i = 0; i < 4; i++){
        for(var j = 0; j < 4; j++){
          if(this.oBlock[i][j].blockType) {              
-          field[i + this.y][j + this.x] = JSON.parse(JSON.stringify(this.oBlock[i][j]));
+          field[i + this.y][j + this.x].blockType = this.oBlock[i][j];
          }
        }
      }
@@ -113,6 +112,7 @@ export default class TetrisMino {
          for(var j = 0; j < 4; j++){
              if(this.oBlock[i][j].blockType) {
                field[i + this.y][j + this.x].blockType = type;
+               field[i + this.y][j + this.x].pattern = this.oBlock[i][j].pattern
              }
          }
      }
@@ -146,7 +146,6 @@ export default class TetrisMino {
             const x = (this.x + j) * blockSize;
             const y = (this.y + i) * blockSize;
             const size = blockSize - 1;
-            // p5.rect((this.x + j) * blockSize, (this.y + i) * blockSize, blockSize - 1, blockSize - 1);
             const info = {
               p5: p5,
               x: x,
@@ -155,7 +154,7 @@ export default class TetrisMino {
               h: size
             }  
                       
-            this.oBlock[i][j].registerFunction('pattern1', info);
+            this.oBlock[i][j].registerFunction(info);
          }
        }
      }
