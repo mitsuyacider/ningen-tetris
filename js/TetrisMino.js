@@ -1,5 +1,7 @@
-export default class TetrisMino {
+import Block from '@/js/Block.js'
+import { log } from 'util';
 
+export default class TetrisMino {
   constructor(_x, _y, _type,  _block, _blockSize) {
     this.blockType = _type
     this.x = this.sx = _x
@@ -8,20 +10,6 @@ export default class TetrisMino {
     this.blockSize = _blockSize
     this.patternNum = 2
     this.pattern = 1;
-  }
-
-  registerFunction(name, response){        
-    const functions = {}
-    for (let i = 1; i < this.patternNum; i++) {
-      const key = 'pattern' + i
-      functions[key] = eval('this.drawPattern' + i)
-    }
-
-    if(typeof functions[name] !== "undefined") {
-      functions[name](response);
-    } else {
-      console.log('This function is not regsted : ' + name)
-    }
   }
 
   /**
@@ -69,8 +57,8 @@ export default class TetrisMino {
    setBlockInField(field) {
      for(var i = 0; i < 4; i++){
        for(var j = 0; j < 4; j++){
-         if(this.oBlock[i][j]) {
-           field[i + this.y][j + this.x] = this.oBlock[i][j];
+         if(this.oBlock[i][j].blockType) {              
+          field[i + this.y][j + this.x] = JSON.parse(JSON.stringify(this.oBlock[i][j]));
          }
        }
      }
@@ -79,15 +67,32 @@ export default class TetrisMino {
    /*
     * NOTE: ブロックが移動できるかチェックする
     */
-   hitCheck (field){
+   hitCheck (field){     
+     // NOTE: 両端のINVISIBLEとWALL分を差し引く
+     if (this.x < 0 || this.x > field[0].length - 2 - 2) return true
+     
      for(var i = 0; i < 4; i++){
-       for(var j = 0; j < 4; j++){
-         if(field[i + this.y][j + this.x] && this.oBlock[i][j]) {
+       for(var j = 0; j < 4; j++){   
+         if(field[i + this.y][j + this.x].blockType && this.oBlock[i][j].blockType) {
            return true;
          }
        }
      }
      return false;
+   }
+
+   gameOverCheck(field) {
+      // NOTE: 両端のINVISIBLEとWALL分を差し引く
+      if (this.x < 0 || this.x > field[0].length - 2 - 2) return true
+      
+      for(var i = 0; i < 4; i++){
+        for(var j = 0; j < 4; j++){   
+          if(this.y == 0 && this.oBlock[i][j].blockType == 1 && field[i + this.y][j + this.x].blockType == 2) {
+           return true;
+          }
+        }
+      }
+      return false;
    }
 
    /*
@@ -98,8 +103,8 @@ export default class TetrisMino {
    setBlockType(field, type) {
      for(var i = 0; i < 4; i++){
          for(var j = 0; j < 4; j++){
-             if(this.oBlock[i][j]) {
-               field[i + this.y][j + this.x] = type;
+             if(this.oBlock[i][j].blockType) {
+               field[i + this.y][j + this.x].blockType = type;
              }
          }
      }
@@ -127,8 +132,9 @@ export default class TetrisMino {
      const blockSize = this.blockSize;
      for (var i = 0; i < 4; i++) {
        for (var j = 0; j < 4; j++) {
-         if(this.oBlock[i][j]) {
-            // p5.fill(255, 0, 0)
+         
+         if(this.oBlock[i][j].blockType) {
+          // p5.fill(255, 0, 0)
             const x = (this.x + j) * blockSize;
             const y = (this.y + i) * blockSize;
             const size = blockSize - 1;
@@ -139,8 +145,9 @@ export default class TetrisMino {
               y: y,
               w: size,
               h: size
-            }
-            this.registerFunction('pattern1', info);
+            }  
+                      
+            this.oBlock[i][j].registerFunction('pattern1', info);
          }
        }
      }
@@ -153,36 +160,4 @@ export default class TetrisMino {
      p5.ellipse((this.x - 1) * blockSize, (this.y - 1) * blockSize, radius, radius);
      p5.pop();
    }
-
-   drawPattern1 (info) {
-    const p5 = info.p5
-    const x = info.x
-    const y = info.y
-    const w = info.w
-    const h = info.h
-
-    var side = w;
-    var side2 = h;	
-    p5.push();
-    p5.translate(x, y);
-    p5.noStroke();
-    p5.fill(131, 18, 28);	
-    p5.beginShape();
-    p5.vertex(side / 3, 0);
-    p5.vertex(side / 3 + side / 3, 0);
-    p5.vertex(side, side/3);
-    p5.vertex(side, side/3 + side / 3);
-    p5.vertex(side / 3 + side / 3, side);
-    p5.vertex(side / 3, side);
-    p5.vertex(0, side / 3 + side / 3);
-    p5.vertex(0, side / 3);
-    
-    p5.endShape(p5.CLOSE);
-    
-    p5.noStroke();
-    p5.fill(142, 75, 28);	
-    // ellipse(x-side/2,y-side/2,30,30);	
-    p5.ellipse(side / 2, side / 2, 10,10);	
-    p5.pop();	
-  }
 }

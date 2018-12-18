@@ -1,10 +1,11 @@
 export default class Block {
-    constructor () {
-        this.blockType = NON_BLOCK
+    constructor (blockType) {
+        this.blockType = blockType
         this.pattern = 0;
+        this.patternNum = 2;
     }
 
-    registerFunction(name, response){        
+    registerFunction (name, response) {  
         const functions = {}
         for (let i = 1; i < this.patternNum; i++) {
             const key = 'pattern' + i
@@ -17,6 +18,12 @@ export default class Block {
             console.log('This function is not regsted : ' + name)
         }
     }  
+
+    data () {
+        console.log('**data');
+        
+        return 124
+    }
     
     drawPattern1 (info) {
         const p5 = info.p5
