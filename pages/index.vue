@@ -10,7 +10,7 @@
     <div class="row border">
       <div class="tetris-container col-md-6 border">
         <div class="human-container" style="d-flex justify-content-center">
-          <video id="video" width="640px" height="480px" autoplay="1" style="position:absolute;"></video>
+          <video id="video" width="640px" height="480px" style="position:absolute;"></video>
           <canvas id="canvas" width="640px" height="480px" style="position:absolute;"></canvas>
         </div>
         <tetris-frame ref="tetris" />
@@ -67,6 +67,20 @@ export default {
     }
   },
   mounted () {
+
+  navigator.getUserMedia =
+    navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia;
+
+  navigator.getUserMedia(
+    { video: true, audio: true },
+      function(stream) {
+        var v = document.getElementById('video');
+        v.src = URL.createObjectURL(stream);
+      },
+      function(error) {
+        console.log(error);
+      }
+    );   
     posenet.setDelegate(this.callbackDelegate);
     posenet.startPosenet();
   },

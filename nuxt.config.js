@@ -1,16 +1,23 @@
+const routerBase = process.env.DEPLOY_ENV === 'GH_PAGES' ? {
+  router: {
+    base: '/ningen-tetris/'
+  }
+} : {}
+
 module.exports = {
+  ...routerBase,
   /*
   ** Headers of the page
   */
   head: {
-    title: 'tetris',
+    title: 'ningen-tetris',
     meta: [
       { charset: 'utf-8' },
       { name: 'viewport', content: 'width=device-width, initial-scale=1' },
       { hid: 'description', name: 'description', content: 'Nuxt.js project' }
     ],
     link: [
-      { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' }
+      { rel: 'icon', type: 'image/x-icon', href: '/ningen-tetris/favicon.ico' }
     ],
     script: [
       { src: 'https://unpkg.com/vue-p5@0.7.x' }
