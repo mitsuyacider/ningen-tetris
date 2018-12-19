@@ -3,7 +3,7 @@ import {drawBoundingBox, drawKeypoints, drawSkeleton} from '@/js/demo_util.js';
 import Stats from 'stats.js';
 
 const imageScaleFactor = 0.5;
-const outputStride = 8;
+const outputStride = 16;
 const flipHorizontal = false;
 const stats = new Stats();
 const contentWidth = 640;
