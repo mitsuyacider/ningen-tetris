@@ -22,7 +22,9 @@
         <div class="score-container row">
           <div class="position-relative score-box col-md-6">
             <img class="img-fluid" src="@/assets/img/score.png" alt="">
-            <span class="score position-absolute">1000</span>
+            <span class="score position-absolute">
+              {{$store.state.score}}
+            </span>
           </div>
         </div><!-- /score -->
         <!-- howto -->
@@ -43,7 +45,7 @@
 
 <script>
 import TetrisFrame from '@/components/TetrisFrame'
-import { log } from 'util';
+import { mapActions } from 'vuex'
 
 // NOTE: サーバーサイドレンダリングはdocumentオブジェクトを参照できないため、
 //       クライアントサイドでのみする処理を明記する。
@@ -71,7 +73,10 @@ export default {
   methods: {
     callbackDelegate(keypoints, score) {
       this.$refs.tetris.setKeyPoints(keypoints);
-    }
+    },
+    ...mapActions({
+      getList: 'index/getScore'
+    })
   }
 }
 </script>

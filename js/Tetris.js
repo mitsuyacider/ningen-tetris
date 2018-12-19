@@ -1,6 +1,8 @@
 
 import TetrisMino from '@/js/TetrisMino.js';
 import Block from '@/js/Block.js'
+import store from '@/store/index.js'
+
 export let mino;
 
 let img
@@ -51,9 +53,16 @@ let oBlock = new Array();               // 操作中のブロック
 let blockType;                      // ブロックの種類番号
 let mode;                           // ゲームの状態  GAME/GAMEOVER/EFFECT
 let clearLine;                          // 消去したライン数
-
+let score = 0;
 let p5;
+
+let callbackOnTetris;
+export function setDelegate(delegate) {
+	callbackOnTetris = delegate;
+}
+
 export function mainGame(_p5) {
+	
   p5 = _p5
 
   p5.preload = _ => {
@@ -74,8 +83,6 @@ export function mainGame(_p5) {
     canvas.parent("p5Canvas");
     // p5.createCanvas(width, height)
     p5.background(60, 46, 64)
-
-
 
     clearLine = 0;
     // ブロックの設定
@@ -116,9 +123,6 @@ export function mainGame(_p5) {
                 [1, 1, 1, 0],
                 [0, 0, 0, 0]]
             ];
-
-        // ステージを設定
-        // setStage()
 
       /*
       * キーボードイベント
@@ -254,9 +258,21 @@ function newGame() {
   setStage();
   mode = GAME;
   frame = 1;
-  speed = 5;
+	speed = 5;
+	score = 0;
   createBlock();
-  mainLoop();
+	mainLoop();
+	
+	// NOTE: reset score
+	notifyScore()
+}
+
+function notifyScore() {
+	const data = {
+		gameMode: mode,
+		score: score
+	}
+	callbackOnTetris(data)
 }
 
 /*
@@ -390,7 +406,10 @@ function mainLoop() {
                                 field[i][j].blockType = NON_BLOCK
                             }
                         }
-                    }
+										}
+										
+										score += deleteLineNum * 10
+										notifyScore()
                 }
                 createBlock()
               })

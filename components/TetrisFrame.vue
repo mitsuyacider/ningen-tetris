@@ -5,7 +5,7 @@
 </template>
 
 <script>
-import TetrisMino from '../js/TetrisMino.js';
+import TetrisMino from '@/js/TetrisMino.js';
 
 if (process.browser) {
   var tetris = require('@/js/Tetris.js')
@@ -22,9 +22,16 @@ export default {
   methods: {
     setKeyPoints: function(keypoints) {
       tetris.updateLayout(keypoints)
+    },
+    callbackOnTetris: function(data) {
+      console.log('callback: ' + data);
+      if (data.gameMode == 1) {
+        this.$store.dispatch('setScore', data.score)
+      }
     }
   },
   mounted () {
+    tetris.setDelegate(this.callbackOnTetris)
     const P5 = require('p5')
     this.p5js = new P5(tetris.mainGame)
   }
