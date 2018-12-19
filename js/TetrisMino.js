@@ -18,13 +18,8 @@ export default class TetrisMino {
     const pattern = Math.floor( Math.random() * (4 + 1 - 1) ) + 1
     for(var i = 0; i < 4; i++) {
       for(var j = 0; j < 4; j++) {
-        if (_block[i][j] == 1) {
-          this.oBlock[i][j].blockType = 1;   
-          this.oBlock[i][j].pattern = pattern;           
-        } else {
-          this.oBlock[i][j].blockType = 0;
-          this.oBlock[i][j].pattern = pattern;           
-        }
+        this.oBlock[i][j].blockType = _block[i][j];   
+        this.oBlock[i][j].pattern = pattern;           
       }
     }
 
