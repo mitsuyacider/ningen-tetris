@@ -161,21 +161,22 @@ function drawPoints(ctx, points, radius, color) {
  * Read our blog post for a description of PoseNet's offset vector outputs
  * https://medium.com/tensorflow/real-time-human-pose-estimation-in-the-browser-with-tensorflow-js-7dd0bc881cd5
  */
-export function drawOffsetVectors(
-    heatMapValues, offsets, outputStride, scale = 1, ctx) {
-  const offsetPoints =
-      posenet.singlePose.getOffsetPoints(heatMapValues, outputStride, offsets);
+// export function drawOffsetVectors(
+//     heatMapValues, offsets, outputStride, scale = 1, ctx) {
+//   const offsetPoints =
+//       posenet.singlePose.getOffsetPoints(heatMapValues, outputStride, offsets);
 
-  const heatmapData = heatMapValues.buffer().values;
-  const offsetPointsData = offsetPoints.buffer().values;
+//   const heatmapData = heatMapValues.buffer().values;
+//   const offsetPointsData = offsetPoints.buffer().values;
 
-  for (let i = 0; i < heatmapData.length; i += 2) {
-    const heatmapY = heatmapData[i] * outputStride;
-    const heatmapX = heatmapData[i + 1] * outputStride;
-    const offsetPointY = offsetPointsData[i];
-    const offsetPointX = offsetPointsData[i + 1];
+//   for (let i = 0; i < heatmapData.length; i += 2) {
+//     const heatmapY = heatmapData[i] * outputStride;
+//     const heatmapX = heatmapData[i + 1] * outputStride;
+//     const offsetPointY = offsetPointsData[i];
+//     const offsetPointX = offsetPointsData[i + 1];
 
-    drawSegment(
-        [heatmapY, heatmapX], [offsetPointY, offsetPointX], color, scale, ctx);
-  }
-}
+//     drawSegment(
+//         [heatmapY, heatmapX], [offsetPointY, offsetPointX], color, scale, ctx);
+//   }
+// }
+
