@@ -235,22 +235,6 @@ function updateMinoPosition(keypoints) {
   }
 }
 
-function drawMiniCharacter(keypoints) {
-  // if(mode == GAME){
-  //   // p5.ellipseMode(p5.CENTER);
-  //   p5.fill(255, 0, 255);
-  //   p5.stroke(0, 0, 255);
-  //   p5.ellipse(500, 400, 100, 100);
-  //
-  //   // p5.push(); 
-  //   // // p5.translate((mino.x + 2) * blockSize, (mino.y + 4) * blockSize)
-  //   // p5.fill(0, 0, 255);
-  //   // p5.ellipse(0, 0, 10, 10);
-  //   //
-  //   // p5.pop();
-  // }
-}
-
 /*
  * NOTE: ゲーム開始処理
  */
