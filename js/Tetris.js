@@ -176,7 +176,6 @@ export function mainGame(_p5) {
 
 export function updateLayout(keypoints) {
   updateMinoPosition(keypoints);
-  // drawMiniCharacter(keypoints);
 }
 
 /*
