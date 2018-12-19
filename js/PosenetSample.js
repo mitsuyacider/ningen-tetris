@@ -11,7 +11,7 @@ const contentHeight = 480;
 // const minPartConfidence = 0.5;
 const minPartConfidence = 0.1;
 const minPoseConfidence = 0.10;
-const maxPoseDetections = 5;
+const maxPoseDetections = 1;
 const nmsRadius = 30.0;
 
 let callbackDelegate;
@@ -81,7 +81,7 @@ function detectPoseInRealTime(video, net) {
         // const pose = await net.estimateSinglePose(video, imageScaleFactor, flipHorizontal, outputStride);
         // poses.push(pose);
 
-        // NOTE: MultiPoseの場合
+        // // NOTE: MultiPoseの場合
         let poses = await net.estimateMultiplePoses(
             video, imageScaleFactor, flipHorizontal, outputStride,
             maxPoseDetections,

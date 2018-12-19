@@ -24,7 +24,7 @@ const GAME = 1;           // ゲーム中
 const GAMEOVER = 0;       // ゲームオーバー時
 const EFFECT = 2;         // ブロックを消すときのエフェクトモード
 // ブロックの状態
-const INVISIVLE_BLOCK = -1;
+const INVISIBLE_BLOCK = -1;
 const NON_BLOCK = 0;      // ブロックが存在しない
 const NORMAL_BLOCK = 1;   // 通常のブロック（動かせる）
 const LOCK_BLOCK = 2;     // ロックした（動かせない）ブロック
@@ -285,26 +285,30 @@ function createBlock() {
     const y = 0;
     const blockType = Math.floor(Math.random() * block.length);
 
-    // NOTE: ※2次元配列をディープコピーする (値渡しで変更されることを防ぐ目的)
+    // NOTE: ※2次元配列をディープコピーする
     const newMino = JSON.parse(JSON.stringify((new Array(4)).fill((new Array(4)).fill(0))));
 
     const arr = block[blockType]
-    const pattern = Math.floor( Math.random() * (4 + 1 - 1) ) + 1
-    // const pattern = 3
-    for (let i = 0; i < 4; i++) {
-        for (let j = 0; j < 4; j++) {
-            let b;
-            if (arr[i][j] == 1) {
-                b = new Block(NORMAL_BLOCK)
-                b.pattern = pattern
-            } else {
-                b = new Block(NON_BLOCK)
-            }
-            newMino[i][j] = b
-        }
-    }
-    
-    mino = new TetrisMino(x, y, blockType, newMino, blockSize)
+		
+		if (mino === undefined) {
+			const pattern = Math.floor( Math.random() * (4 + 1 - 1) ) + 1
+			// const pattern = 3
+			for (let i = 0; i < 4; i++) {
+					for (let j = 0; j < 4; j++) {
+							let b;
+							if (arr[i][j] == 1) {
+									b = new Block(NORMAL_BLOCK)
+									b.pattern = pattern
+							} else {
+									b = new Block(NON_BLOCK)
+							}
+							newMino[i][j] = b
+					}
+			}
+			mino = new TetrisMino(x, y, blockType, newMino, blockSize)
+		} else {
+			mino.refreshMino(x, y, blockType, arr, blockSize)
+		}
     if(mino.gameOverCheck(field)){
         mode = GAMEOVER;
     }
@@ -320,11 +324,11 @@ function drawFixedBlocks() {
             p5.push();
                     // NOTE: 上下の列は非表示
             if (i === 0 || i === field.length - 1) {
-                field[i][j].blockType = INVISIVLE_BLOCK
+                field[i][j].blockType = INVISIBLE_BLOCK
             } 
             switch(field[i][j].blockType){
                 // なにもない
-                case INVISIVLE_BLOCK:
+                case INVISIBLE_BLOCK:
                     p5.noFill();
                     p5.noStroke();
                     p5.rect(j * blockSize, i * blockSize, blockSize - 1, blockSize - 1);
@@ -447,7 +451,7 @@ function setStage() {
       for (let x = 0; x < stage[y].length; x++) {
         // NOTE: 上下の列は非表示
         if (y === 0 || y === stage.length - 1) {
-          stage[y][x] = new Block(INVISIVLE_BLOCK)
+          stage[y][x] = new Block(INVISIBLE_BLOCK)
         } else if (x === 0 || x === stage[y].length - 1 ||
           y === stage.length - 2 ) {
             stage[y][x] = new Block(WALL)

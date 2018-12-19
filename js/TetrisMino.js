@@ -10,6 +10,27 @@ export default class TetrisMino {
     this.blockSize = _blockSize
   }
 
+  refreshMino(_x, _y, _type,  _block, _blockSize) {
+    this.blockType = _type
+    this.x = this.sx = _x
+    this.y = this.sy = _y
+    
+    const pattern = Math.floor( Math.random() * (4 + 1 - 1) ) + 1
+    for(var i = 0; i < 4; i++) {
+      for(var j = 0; j < 4; j++) {
+        if (_block[i][j] == 1) {
+          this.oBlock[i][j].blockType = 1;   
+          this.oBlock[i][j].pattern = pattern;           
+        } else {
+          this.oBlock[i][j].blockType = 0;
+          this.oBlock[i][j].pattern = pattern;           
+        }
+      }
+    }
+
+    this.blockSize = _blockSize
+  }
+
   /**
     NOTE: ミノを落とす
   */
@@ -65,7 +86,8 @@ export default class TetrisMino {
      for(var i = 0; i < 4; i++){
        for(var j = 0; j < 4; j++){
          if(this.oBlock[i][j].blockType) {              
-          field[i + this.y][j + this.x].blockType = this.oBlock[i][j];
+          field[i + this.y][j + this.x].blockType = this.oBlock[i][j].blockType;
+          field[i + this.y][j + this.x].pattern = this.oBlock[i][j].pattern;
          }
        }
      }
@@ -75,14 +97,20 @@ export default class TetrisMino {
     * NOTE: ブロックが移動できるかチェックする
     */
    hitCheck (field){     
-     // NOTE: 両端のINVISIBLEとWALL分を差し引く
-     if (this.x < 0 || this.x > field[0].length - 2 - 2) return true
+     // NOTE: 両端のWALL分を差し引く
+    //  if (this.x < 0 || this.x > field[0].length - 2 - 2) {
+    //   console.log('hit')
+    //   return true 
+    //  }
      
      for(var i = 0; i < 4; i++){
        for(var j = 0; j < 4; j++){   
-         if(field[i + this.y][j + this.x].blockType && this.oBlock[i][j].blockType) {
+
+        if (field[i + this.y][j + this.x] === undefined) continue
+
+         if(field[i + this.y][j + this.x].blockType && this.oBlock[i][j].blockType == 1) {
            return true;
-         }
+         }       
        }
      }
      return false;
@@ -158,13 +186,6 @@ export default class TetrisMino {
          }
        }
      }
-
-     // 円を描画
-     p5.noFill();
-     p5.stroke(255,255,0);
-     const radius = blockSize * 5;
-     p5.ellipseMode(p5.CORNER);
-     p5.ellipse((this.x - 1) * blockSize, (this.y - 1) * blockSize, radius, radius);
      p5.pop();
    }
 }
