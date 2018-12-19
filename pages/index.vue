@@ -68,7 +68,7 @@ export default {
   },
   mounted () {
     posenet.setDelegate(this.callbackDelegate);
-    // posenet.startPosenet();
+    posenet.startPosenet();
   },
   methods: {
     callbackDelegate(keypoints, score) {
