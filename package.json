@@ -31,5 +31,8 @@
     "eslint-plugin-vue": "^4.0.0",
     "node-sass": "^4.11.0",
     "sass-loader": "^7.1.0"
+  },
+  "engines": {
+    "node": "0.10.x"
   }
 }
