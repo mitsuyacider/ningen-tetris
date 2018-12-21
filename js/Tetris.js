@@ -55,6 +55,7 @@ let mode;                           // ゲームの状態  GAME/GAMEOVER/EFFECT
 let clearLine;                          // 消去したライン数
 let score = 0;
 let p5;
+let nosePointQueue = new Array(3); 
 
 let callbackOnTetris;
 export function setDelegate(delegate) {
@@ -204,26 +205,31 @@ function updateMinoPosition(keypoints) {
       mino.setBlockType(field, NON_BLOCK)
       mino.keepInterimPosition()
 
-      // const rightSholder = keypoints[5]
-      // const leftSholder = keypoints[6]
-      // if (rightSholder.score > 0.5 && leftSholder.score > 0.5) {
-      //   // 左肩と右肩の中点をx座標とする
-      //   const posX = (rightSholder.position.x + leftSholder.position.x) / 2;
-      //   const mapval = Math.floor(p5.map(posX, 0, width, 1, BLOCK_COLS - 1))
-      //   mino.x = mapval;
-      // }
-
-      const posX = keypoints[0].position.x;
+      // NOTE: 鼻の位置をミノブロックのx座標にする
+      const nosePoint = keypoints[0]
+      const posX = nosePoint.position.x;
       const mapval = Math.floor(p5.map(posX, 0, width, 1, BLOCK_COLS - 1))
       mino.x = mapval;
 
       // NOTE: 左右の目の座標から傾きを算出
       //       傾きが一定以上であれば回転
-      const leftEye = keypoints[1].position;
-      const rightEye = keypoints[2].position;
-      const slope = (leftEye.y - rightEye.y) / (leftEye.x - rightEye.x)
-      if (slope > 1.0) {
-        rotateBlock()
+      if (nosePointQueue.length < 3) {
+        nosePointQueue.push(nosePoint.position.y)
+      } else {
+
+				nosePointQueue.shift()
+				nosePointQueue.push(nosePoint.position.y)
+
+				const y0 = nosePointQueue[0]
+        const y1 = nosePointQueue[1]
+        const y2 = nosePointQueue[2]
+
+				const distance01 = y1 - y0
+				const distance02 = y1 - y2
+				// NOTE: 2点間の距離が大きい場合、JUMPしたとみなす(回転させる)
+				if (distance01 > 5 && distance02 > 5) {
+					rotateBlock()
+        }
       }
 
       if(mino.hitCheck(field)){
