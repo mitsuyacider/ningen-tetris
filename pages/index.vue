@@ -1,5 +1,5 @@
 <template>
-  <div class="container-fluid border">
+  <div class="container-fluid">
     <!-- Header -->
     <div class="header col-md-6 d-flex justify-content-center py-3">
       <h1>NINGEN TETRIS</h1>
@@ -7,44 +7,22 @@
 
     <!-- Main Contents -->
     <!-- tetris container -->
-    <div class="row border">
-      <div class="tetris-container col-md-6 border">
+    <div class="row">
+      <div class="tetris-container col-md-6">
         <div class="human-container" style="d-flex justify-content-center">
           <video id="video" width="640px" height="480px" style="position:absolute;"></video>
-          <canvas id="canvas" width="640px" height="480px" style="position:absolute;"></canvas>
+          <canvas :class="{show : $store.state.isCameraMode }" id="canvas" width="640px" height="480px" style="position:absolute;"></canvas>
         </div>
         <tetris-frame ref="tetris" />
       </div><!-- /tetris container -->
-
-      <!-- info container -->
-      <div class="info-container col-md-6 mb-3 border">
-        <!-- score -->
-        <div class="score-container row">
-          <div class="position-relative score-box col-md-6">
-            <img class="img-fluid" src="@/assets/img/score.png" alt="">
-            <span class="score position-absolute">
-              {{$store.state.score}}
-            </span>
-          </div>
-        </div><!-- /score -->
-        <!-- howto -->
-        <div class="howto-container row">
-          <div class="move-box col-md-6">
-            <img class="img-fluid" src="@/assets/img/move.png" alt="">
-          </div>
-          <div class="rotate-box col-md-6">
-            <img class="img-fluid" src="@/assets/img/rotate.png" alt="">
-          </div>
-        </div><!-- /howto -->        
-        <div class="mino-info-container row">
-        </div>
-      </div><!-- /info container -->
+      <info-container />
     </div><!-- /Main Contents -->
   </div>
 </template>
 
 <script>
 import TetrisFrame from '@/components/TetrisFrame'
+import InfoContainer from '@/components/InfoContainer'
 import { mapActions } from 'vuex'
 
 // NOTE: サーバーサイドレンダリングはdocumentオブジェクトを参照できないため、
@@ -55,7 +33,8 @@ if (process.browser) {
 
 export default {
   components: {
-    TetrisFrame
+    TetrisFrame,
+    InfoContainer
   },
   data () {
     return {
@@ -96,18 +75,9 @@ export default {
 </script>
 
 <style lang="scss">
+
 body {
   background: #3C2E40;
-}
-
-.score-box {
-  // background-size: cover;
-  // background-image: url('../assets/img/score.png');
-  // background-repeat: no-repeat;
-}
-
-.header {
-  color: #87C166;
 }
 
 .human-container {
@@ -121,34 +91,27 @@ body {
     margin: auto;
   }
 
-  canvas {
+  .show {
     opacity:.65;
+  }
+
+  canvas {
+    opacity: 0;
     top: 0;
     left: 0;
     right: 0;
     bottom: 0;
     margin: auto;
-
   }
 }
 
-.score {
-  top: 50px;
-  left: 32px;
-  font-size: 30px;
-  letter-spacing: 25px;
-  color: #F597AB;
-  // font-family: 'Osaka';
-}
-
-.howto-container {
-  margin-top: 50px;
+.header {
+  color: #87C166;
 }
 
 table td {
   width: 50px;
   height: 50px;
-  border:1px solid black;
 }
 
 </style>
