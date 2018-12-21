@@ -11,6 +11,7 @@
 
 <script>
 import TetrisMino from '@/js/TetrisMino.js';
+import { mapGetters } from 'vuex'
 
 if (process.browser) {
   var tetris = require('@/js/Tetris.js')
@@ -39,6 +40,37 @@ export default {
     },
     onClickGameStart() {
       tetris.newGame()
+    }
+  },
+  computed: {
+    // ゲッターを、スプレッド演算子（object spread operator）を使って computed に組み込む
+    ...mapGetters([
+			'gameSpeed'
+    ])
+	},  
+  watch: {
+    gameSpeed (newVal, oldVal) {
+      let speed = 50;
+
+      switch(newVal) {
+        case 'ULTRA BEGINNER' : 
+          speed = 55;
+          break;
+        case 'BEGINNER' : 
+          speed = 45;
+          break;
+        case 'NORMAL' : 
+          speed = 30;
+          break;
+        case 'EXPERT' : 
+          speed = 15;
+          break;
+        case 'GOD' : 
+          speed = 5;
+          break;
+      }
+
+      tetris.setSpeed(speed)
     }
   },
   mounted () {

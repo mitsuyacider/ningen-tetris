@@ -46,7 +46,6 @@ const NEXTLEVEL = 10;                 // 次のレベルまでの消去ライン
 let stage = new Array(BLOCK_COLS);  // ゲームのステージ枠（壁の情報のみ、変化しない）
 let field = new Array(BLOCK_COLS);      // ゲーム中のステージ枠とブロック表示用（変化する）
 let blockSize;                             // ブロックサイズ
-let speed;                          // 落下速度
 let frame;                          // ゲームフレーム番号
 let block = new Array();                // 落ちてくるブロックの種類（７種類）
 let oBlock = new Array();               // 操作中のブロック
@@ -61,6 +60,11 @@ let callbackOnTetris;
 export function setDelegate(delegate) {
 	callbackOnTetris = delegate;
 }
+
+let speed;
+export function setSpeed(s) {
+    speed = s
+}  
 
 export let isGameStart = false;
 export function mainGame(_p5) {
@@ -251,7 +255,7 @@ export function newGame() {
   isGameStart = true;
   mode = GAME;
   frame = 1;
-	speed = 5;
+	speed = 50;
 	score = 0;
   createBlock();
 	mainLoop();

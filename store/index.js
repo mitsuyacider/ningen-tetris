@@ -6,7 +6,8 @@ const createStore = () => {
 			score: 0,
 			level: "BEGINNER",
 			isCameraPreview: false,
-			gameMode: 'ningen'
+			gameMode: 'ningen',
+			gameSpeed: 'ULTRA BEGINNER'
     }),
     mutations: {
       setScore (state, val) {
@@ -17,6 +18,9 @@ const createStore = () => {
 			},
 			setGameMode(state, mode) {
 				state.gameMode = mode;
+			},
+			setGameSpeed(state, speed) {
+				state.gameSpeed = speed;
 			}
 		},
 		actions: {
@@ -28,7 +32,10 @@ const createStore = () => {
 			},
 			setGameMode(context, mode) {
 				context.commit('setGameMode', mode)
-			}
+			},
+			setGameSpeed(context, speed) {
+				context.commit('setGameSpeed', speed)
+			}		
 		},
 		getters: {
 			score (state) {
@@ -42,6 +49,9 @@ const createStore = () => {
 			},
 			gameMode (state) {
 				return state.gameMode
+			},
+			gameSpeed (state) {
+				return state.gameSpeed
 			}
 		}
   })

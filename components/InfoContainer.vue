@@ -44,7 +44,7 @@
 			</div>          
 			<div class="level-box col-md-6">
 				<b-card header="LEVEL"
-								:title=$store.getters.level.toString()
+								:title=$store.getters.gameSpeed
 								tag="article"
 								style="max-width: 80%;"
 								class="mb-2">
@@ -81,7 +81,21 @@
 								<b-tab v-on:click="setGameMode('normal')" title="NORMAL"></b-tab>
 							</b-tabs>				
 						</div>
-					</div>			
+					</div>
+					<div class="paramerter-container__record d-flex">
+						<div class="title col-md-2">
+							<span>Speed</span>				
+						</div>
+						<div class="parameter col-md-10">
+							<b-tabs pills card>
+								<b-tab v-on:click="setGameSpeed('ULTRA BEGINNER')" title="SLOWEST"></b-tab>
+								<b-tab v-on:click="setGameSpeed('BEGINNER')" title="SLOWER"></b-tab>
+								<b-tab v-on:click="setGameSpeed('NORMAL')" title="NORMAL"></b-tab>
+								<b-tab v-on:click="setGameSpeed('EXPERT')" title="FASTER"></b-tab>
+								<b-tab v-on:click="setGameSpeed('GOD')" title="FASTEST"></b-tab>
+							</b-tabs>				
+						</div>
+					</div>								
 				</b-card>					
 			</div> 			
 		</div><!-- /parameter-container -->
@@ -116,7 +130,8 @@ export default {
 	methods: {
 		 ...mapActions([
 			'setIsCameraPreview',
-			'setGameMode'
+			'setGameMode',
+			'setGameSpeed'
 		]),
 		onClickGameMode(index) {
 			console.log(index + " ? " + this.isNingenMode)
