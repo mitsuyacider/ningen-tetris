@@ -1,6 +1,11 @@
 <template>
-  <div class="container border ">
-    <div class="d-flex justify-content-center" ref="canvas" id="p5Canvas"></div>
+  <div class="container">
+    <div class="tetris-container" >
+      <div class="d-flex justify-content-center" ref="canvas" id="p5Canvas"></div>
+    </div>
+    <div class="d-flex justify-content-center">
+      <b-button v-on:click="onClickGameStart">Game Start</b-button>
+    </div>
   </div>
 </template>
 
@@ -16,7 +21,8 @@ export default {
     return {
       keypoints: [],
       mino: {},
-      p5js: {}
+      p5js: {},
+      isStart: false
     }
   },
   methods: {
@@ -27,7 +33,12 @@ export default {
       console.log('callback: ' + data);
       if (data.gameMode == 1) {
         this.$store.dispatch('setScore', data.score)
+      } else if (data.gameMode == 0) {
+        this.isStart = false
       }
+    },
+    onClickGameStart() {
+      tetris.newGame()
     }
   },
   mounted () {

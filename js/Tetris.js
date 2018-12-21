@@ -62,6 +62,7 @@ export function setDelegate(delegate) {
 	callbackOnTetris = delegate;
 }
 
+export let isGameStart = false;
 export function mainGame(_p5) {
 	
   p5 = _p5
@@ -130,13 +131,15 @@ export function mainGame(_p5) {
       */
       window.onkeydown = keyDownFunc;
       newGame()
+      isGameStart = false
   }
 
   p5.draw = _ => {
     p5.background(60, 46, 64)
 
-    mainLoop()
-    p5.text(Math.floor(p5.frameRate()), 550, 50)
+    if (isGameStart) {
+        mainLoop()
+    }
   }
 
   /*
@@ -243,8 +246,9 @@ function updateMinoPosition(keypoints) {
 /*
  * NOTE: ゲーム開始処理
  */
-function newGame() {
+export function newGame() {
   setStage();
+  isGameStart = true;
   mode = GAME;
   frame = 1;
 	speed = 5;
@@ -415,6 +419,7 @@ function mainLoop() {
       }
       else if(mode == GAMEOVER){
           gameOver();
+          isGameStart = false
       }
       else if(mode == EFFECT){
       }
