@@ -65,7 +65,9 @@ export default {
   },
   methods: {
     callbackDelegate(keypoints, score) {
-      this.$refs.tetris.setKeyPoints(keypoints);
+      if (this.$store.state.gameMode === 'ningen') {
+        this.$refs.tetris.setKeyPoints(keypoints);
+      }
     },
     ...mapActions({
       getList: 'index/getScore'

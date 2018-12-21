@@ -66,14 +66,14 @@
 						<div class="parameter col-md-10">
 							<b-tabs pills card>
 								<b-tab v-on:click="setIsCameraPreview(true)" title="PREVIEW"></b-tab>
-								<b-tab v-on:click="setIsCameraPreview(false)" title="HIDDEN" active></b-tab>
+								<b-tab v-on:click="setIsCameraPreview(false)" title="NO CAMERA" active></b-tab>
 							</b-tabs>									
 							<!-- <b-button :pressed.sync="myToggle" variant="secondary">{{myToggle ? "Camera View" : "No Camera"}}</b-button> -->
 						</div>
 					</div>
 					<div class="paramerter-container__record d-flex">
 						<div class="title col-md-2">
-							<span>GameMode</span>				
+							<span>PlayStyle</span>				
 						</div>
 						<div class="parameter col-md-10">
 							<b-tabs pills card>
@@ -127,12 +127,15 @@ export default {
 
 <style lang="scss" scoped>
 .paramerter-container {
+	margin-top: 30px;
+	color: #6C6A2C;
+
 	.card-body {
 		padding: 10px;
 	}
 	&__record {
 		.title {
-			padding: 0;
+			padding: 0 10px;;
 		}
 	}
 }
@@ -171,8 +174,8 @@ export default {
   margin-top: 0px;
 }
 
-.paramerter-container {
-	margin-top: 30px;
-	color: #6C6A2C;
+.card-text, .card-title {
+	padding: 0 10px;;
 }
+
 </style>
