@@ -5,22 +5,29 @@ const createStore = () => {
     state: () => ({
 			score: 0,
 			level: "BEGINNER",
-			isCameraMode: false
+			isCameraPreview: false,
+			gameMode: 'ningen'
     }),
     mutations: {
       setScore (state, val) {
         state.score = val
 			},
-			setIsCameraMode(state, flag) {
-				state.isCameraMode = flag;
+			setIsCameraPreview(state, flag) {
+				state.isCameraPreview = flag;
+			},
+			setGameMode(state, mode) {
+				state.gameMode = mode;
 			}
 		},
 		actions: {
 			setScore (context, val) {
 				context.commit('setScore', val)
 			},
-			setIsCameraMode(context, flag) {
-				context.commit('setIsCameraMode', flag)
+			setIsCameraPreview(context, flag) {
+				context.commit('setIsCameraPreview', flag)
+			},
+			setGameMode(context, mode) {
+				context.commit('setGameMode', mode)
 			}
 		},
 		getters: {
@@ -30,8 +37,11 @@ const createStore = () => {
 			level (state) {
 				return state.level
 			},
-			isCameraMode (state) {
-				return state.isCameraMode
+			isCameraPreview (state) {
+				return state.isCameraPreview
+			},
+			gameMode (state) {
+				return state.gameMode
 			}
 		}
   })

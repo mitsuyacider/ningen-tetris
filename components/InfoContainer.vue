@@ -13,7 +13,7 @@
 								style="max-width: 80%;"
 								class="mb-2">
 					<p class="card-text">
-						If you move between left and right, falling tetris block will follow you.
+						If you move between left and right, falling tetris block will follow with you.
 					</p>
 				</b-card>				
 			</div>
@@ -51,11 +51,40 @@
 				</b-card>					
 			</div>          
 		</div><!-- /score-container -->		
-		<div class="paramerter-container">
-			<div class="paramerter-container__show-video">
-		    <b-button :pressed.sync="myToggle" variant="secondary">{{myToggle ? "Camera View" : "No Camera"}}</b-button>
-			</div>
-		</div>    
+		<!-- parameter-container -->
+		<div class="paramerter-container row">
+			<div class="level-box col-md-12">
+				<b-card header="Other Settings"
+								tag="article"
+								style="max-width: 90%;"
+								class="mb-2">
+
+					<div class="paramerter-container__record d-flex">
+						<div class="title col-md-2">
+							<span>Camera</span>				
+						</div>
+						<div class="parameter col-md-10">
+							<b-tabs pills card>
+								<b-tab v-on:click="setIsCameraPreview(true)" title="PREVIEW"></b-tab>
+								<b-tab v-on:click="setIsCameraPreview(false)" title="HIDDEN" active></b-tab>
+							</b-tabs>									
+							<!-- <b-button :pressed.sync="myToggle" variant="secondary">{{myToggle ? "Camera View" : "No Camera"}}</b-button> -->
+						</div>
+					</div>
+					<div class="paramerter-container__record d-flex">
+						<div class="title col-md-2">
+							<span>GameMode</span>				
+						</div>
+						<div class="parameter col-md-10">
+							<b-tabs pills card>
+								<b-tab v-on:click="setGameMode('ningen')" title="NINGEN"></b-tab>
+								<b-tab v-on:click="setGameMode('normal')" title="NORMAL"></b-tab>
+							</b-tabs>				
+						</div>
+					</div>			
+				</b-card>					
+			</div> 			
+		</div><!-- /parameter-container -->
 	</div><!-- /info container -->
 </template>
 
@@ -69,10 +98,7 @@ export default {
 					move: require('@/assets/img/move.png'),
 					rotate: require('@/assets/img/rotate.png')
 			},
-      myToggle: false,
-      buttons: [
-        { variant: 'outline-success', caption: 'カメラ表示', state: false }
-      ]			
+			isNingenMode: true
 		}
 	},
   computed: {
@@ -83,20 +109,34 @@ export default {
     ])
 	},
 	watch: {
-		myToggle(newVal, oldVal) {
-			console.log(newVal + " ? " + this.myToggle)
-			this.setIsCameraMode(newVal)
+		isNingenMode(newVal, oldVal) {
+			console.log(newVal + " ? " + this.isNingenMode)
 		}
 	},
 	methods: {
 		 ...mapActions([
-      'setIsCameraMode'
-    ]),
+			'setIsCameraPreview',
+			'setGameMode'
+		]),
+		onClickGameMode(index) {
+			console.log(index + " ? " + this.isNingenMode)
+		}
 	}
 }
 </script>
 
 <style lang="scss" scoped>
+.paramerter-container {
+	.card-body {
+		padding: 10px;
+	}
+	&__record {
+		.title {
+			padding: 0;
+		}
+	}
+}
+
 .card {
 	border: none;
 
@@ -107,8 +147,10 @@ export default {
 
 	.card-body {
 		background: #F7F1D5;
+		padding: 10px;
 	}
 }
+
 .score-container {
 	margin-top: 30px;
 	.card-body {

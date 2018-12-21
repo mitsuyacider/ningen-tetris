@@ -11,7 +11,7 @@
       <div class="tetris-container col-md-6">
         <div class="human-container" style="d-flex justify-content-center">
           <video id="video" width="640px" height="480px" style="position:absolute;"></video>
-          <canvas :class="{show : $store.state.isCameraMode }" id="canvas" width="640px" height="480px" style="position:absolute;"></canvas>
+          <canvas :class="{show : $store.state.isCameraPreview }" id="canvas" width="640px" height="480px" style="position:absolute;"></canvas>
         </div>
         <tetris-frame ref="tetris" />
       </div><!-- /tetris container -->
