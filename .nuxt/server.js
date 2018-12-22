@@ -8,7 +8,7 @@ import { createApp, NuxtError } from './index'
 const debug = require('debug')('nuxt:render')
 debug.color = 4 // force blue color
 
-const isDev = false
+const isDev = true
 
 const noopApp = () => new Vue({ render: h => h('div') })
 
@@ -78,6 +78,8 @@ export default async (ssrContext) => {
     app.context.error({ statusCode: 404, path: ssrContext.url, message: `This page could not be found` })
     return renderErrorPage()
   }
+
+  const s = isDev && Date.now()
 
   // Components are already resolved by setContext -> getRouteData (app/utils.js)
   const Components = getMatchedComponents(router.match(ssrContext.url))
@@ -207,6 +209,8 @@ export default async (ssrContext) => {
 
     return Promise.all(promises)
   }))
+
+  if (asyncDatas.length) debug('Data fetching ' + ssrContext.url + ': ' + (Date.now() - s) + 'ms')
 
   // datas are the first row of each
   ssrContext.nuxt.data = asyncDatas.map(r => r[0] || {})
