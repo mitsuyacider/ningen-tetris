@@ -10,7 +10,7 @@ import _6f6c098b from '../layouts/default.vue'
 const layouts = { "_default": _6f6c098b }
 
 export default {
-  head: {"title":"ningen-tetris","meta":[{"charset":"utf-8"},{"name":"viewport","content":"width=device-width, initial-scale=1"},{"hid":"description","name":"description","content":"Nuxt.js project"}],"link":[{"rel":"icon","type":"image\u002Fx-icon","href":"favicon.ico"},{"rel":"icon","type":"image\u002Fpng","sizes":"32x32","href":"favicon-32x32.png"},{"rel":"icon","type":"image\u002Fpng","sizes":"16x16","href":"favicon-16x16.png"}],"script":[{"src":"https:\u002F\u002Funpkg.com\u002Fvue-p5@0.7.x"}],"style":[]},
+  head: {"title":"ningen-tetris","meta":[{"charset":"utf-8"},{"name":"viewport","content":"width=device-width, initial-scale=1"},{"hid":"description","name":"description","content":"Nuxt.js project"}],"link":[{"rel":"icon","type":"image\u002Fx-icon","href":".\u002Ffavicon.ico"},{"rel":"icon","type":"image\u002Fpng","sizes":"32x32","href":".\u002Ffavicon-32x32.png"},{"rel":"icon","type":"image\u002Fpng","sizes":"16x16","href":".\u002Ffavicon-16x16.png"}],"script":[{"src":"https:\u002F\u002Funpkg.com\u002Fvue-p5@0.7.x"}],"style":[]},
 
   render(h, props) {
     const loadingEl = h('nuxt-loading', { ref: 'loading' })
