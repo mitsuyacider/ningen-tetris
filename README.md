@@ -1,23 +1,18 @@
-# tetris
+# ningen tetris
+Sample image
+* ![サンプル](./sample.gif)
 
-> Nuxt.js project
+This is [demo](https://ningen-tetris.herokuapp.com/)
 
-## Build Setup
-
+## How to use
+* Just start with npm install & run.
 ``` bash
-# install dependencies
-$ npm install # Or yarn install
-
-# serve with hot reload at localhost:3000
+$ npm install
 $ npm run dev
-
-# build for production and launch server
-$ npm run build
-$ npm start
-
-# generate static project
-$ npm run generate
 ```
 
-For detailed explanation on how things work, checkout the [Nuxt.js docs](https://github.com/nuxt/nuxt.js).
+* If you have great GPU, this sample might be by far faster.
+---
 
+Game logic is inspired in [this program](https://torisky.com/javascript%EF%BC%9A%E3%83%86%E3%83%88%E3%83%AA%E3%82%B9%E3%83%97%E3%83%AD%E3%82%B0%E3%83%A9%E3%83%A0/). Thank you for sharing.
+To detect human pose, this system introduce *Tensorflow.js* and reference [sample code](https://developers.gnavi.co.jp/entry/posenet/hasegawa).
